@@ -20,33 +20,38 @@ function ScrollToTop() {
   return null;
 }
 
-/** Evita tela em branco diante de erros inesperados de runtime */
-class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
+/**
+ * ErrorBoundary — componente de classe (sem hooks), captura erros de
+ * renderização e exibe um fallback elegante em vez de tela em branco.
+ */
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state: { error: Error | null } = { error: null };
 
-  static getDerivedStateFromError() {
-    return { failed: true };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
   }
 
-  componentDidCatch(error: unknown, info: ErrorInfo) {
-    console.error("Erro de renderização:", error, info);
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("[Porto Baa'R Black] erro capturado:", error, info.componentStack);
   }
 
   render() {
-    if (this.state.failed) {
+    if (this.state.error) {
       return (
-        <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#0d0b09", color: "#f2ead9", fontFamily: "Sora, sans-serif", padding: 24, textAlign: "center" }}>
-          <div>
-            <p style={{ fontFamily: "Anton, sans-serif", fontSize: 32, textTransform: "uppercase" }}>A chapa apagou 😅</p>
-            <p style={{ color: "#a89b8a", marginTop: 8 }}>Algo deu errado por aqui. Recarregue a página para reacender.</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              style={{ marginTop: 20, background: "#ff6b2c", color: "#1a0c05", border: "none", padding: "12px 28px", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: 2, cursor: "pointer" }}
-            >
-              Recarregar
-            </button>
-          </div>
+        <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[#0d0b09] px-6 text-center">
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#ff6b2c]">Erro na chapa</p>
+          <h1 className="font-display text-4xl uppercase text-[#f2ead9] sm:text-5xl">Algo queimou por aqui</h1>
+          <p className="max-w-md text-sm leading-relaxed text-[#a89b8a]">
+            Encontramos um problema ao renderizar a página. Recarregue para tentar novamente — se persistir, limpe o cache
+            do navegador.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="bg-[#ff6b2c] px-8 py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-[#0d0b09] transition-colors hover:bg-[#e3a83e]"
+          >
+            Recarregar página
+          </button>
         </div>
       );
     }

@@ -51,8 +51,9 @@ export function CartDrawer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
+        <div key="cart-wrapper" className="contents">
           <motion.div
+            key="cart-backdrop"
             className="fixed inset-0 z-[84] bg-bg/70 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -61,6 +62,7 @@ export function CartDrawer() {
             aria-hidden
           />
           <motion.aside
+            key="cart-drawer"
             className="fixed inset-y-0 right-0 z-[85] flex w-full max-w-md flex-col border-l border-line bg-panel"
             initial={reduce ? { opacity: 0 } : { x: "100%" }}
             animate={reduce ? { opacity: 1 } : { x: 0 }}
@@ -104,7 +106,7 @@ export function CartDrawer() {
               <CheckoutStep lines={lines} subtotal={subtotal} />
             )}
           </motion.aside>
-        </>
+        </div>
       )}
     </AnimatePresence>
   );

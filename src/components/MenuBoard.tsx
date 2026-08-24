@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Flame, Minus, Plus, Search, Sparkles } from "lucide-react";
 import type { MenuItem, MenuTag } from "../config/menu";
@@ -103,13 +103,11 @@ export default function MenuBoard({
             <p className="mt-2 text-sm text-sand">Nenhum item encontrado para “{query}”. Tenta outra palavra?</p>
           </div>
         ) : (
-          <motion.div layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <AnimatePresence mode="popLayout">
-              {visible.map((item, i) => (
-                <ProductCard key={item.id} item={item} index={i} onOpen={() => setSelected(item)} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {visible.map((item, i) => (
+              <ProductCard key={item.id} item={item} index={i} onOpen={() => setSelected(item)} />
+            ))}
+          </div>
         )}
       </div>
 
@@ -134,11 +132,9 @@ function ProductCard({ item, index, onOpen }: { item: MenuItem; index: number; o
   const reduce = useReducedMotion();
   return (
     <motion.article
-      layout
       initial={reduce ? false : { opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.2 } }}
       transition={{ duration: 0.55, delay: Math.min(index * 0.06, 0.4), ease: [0.22, 1, 0.36, 1] }}
       className="group flex flex-col overflow-hidden border border-line bg-panel transition-all duration-300 hover:-translate-y-1 hover:border-ember/50 hover:shadow-lift"
     >
@@ -238,16 +234,12 @@ function ItemModal({ item, onClose }: { item: MenuItem | null; onClose: () => vo
     setExtras((prev) => (prev.includes(name) ? prev.filter((e) => e !== name) : [...prev, name]));
 
   return (
-    <AnimatePresence>
+    <div className="fixed inset-0 z-[90]" role="dialog" aria-modal="true" aria-label={`Detalhes de ${item.name}`}>
       <motion.div
-        className="fixed inset-0 z-[90] flex items-end justify-center bg-bg/80 backdrop-blur-sm sm:items-center sm:p-6"
+        className="fixed inset-0 flex items-end justify-center bg-bg/80 backdrop-blur-sm sm:items-center sm:p-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
         onClick={onClose}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Detalhes de ${item.name}`}
       >
         <motion.div
           className="max-h-[92vh] w-full max-w-2xl overflow-y-auto border border-line bg-panel sm:max-h-[85vh]"
@@ -365,6 +357,6 @@ function ItemModal({ item, onClose }: { item: MenuItem | null; onClose: () => vo
           </div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </div>
   );
 }
