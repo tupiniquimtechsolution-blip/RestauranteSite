@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Flame, Minus, Plus, Search, Sparkles } from "lucide-react";
@@ -6,7 +6,6 @@ import type { MenuItem, MenuTag } from "../config/menu";
 import { getExtrasPrice, menuCategories } from "../config/menu";
 import { useCart } from "../context/CartContext";
 import { formatBRL } from "../lib/format";
-import { ScrollReveal } from "./ui";
 
 /* ============================================================
    CARDAPIO — abas animadas + grid de produtos + modal do item
@@ -214,16 +213,14 @@ function ItemModal({ item, onClose }: { item: MenuItem | null; onClose: () => vo
   const [extras, setExtras] = useState<string[]>([]);
   const [note, setNote] = useState("");
   const [qty, setQty] = useState(1);
-  const [key, setKey] = useState("");
+  const itemId = item?.id;
 
-  // reset do estado quando troca de item
-  if (item && item.id !== key) {
-    setKey(item.id);
+  // reset do estado quando troca de item (ou ao fechar)
+  useEffect(() => {
     setExtras([]);
     setNote("");
     setQty(1);
-  }
-  if (!item && key !== "") setKey("");
+  }, [itemId]);
 
   if (!item) return null;
 
