@@ -18,14 +18,19 @@
   --color-leaf: var(--t-leaf);
   --color-chili: var(--t-chili);
 
-  --font-display: "Anton", "Arial Narrow", sans-serif;
-  --font-body: "Sora", "Segoe UI", sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-wordmark: "Parisienne", cursive;
+  --font-body: "Karla", "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
 
   --radius-card: var(--t-radius);
 
   --shadow-ember: var(--t-shadow-ember);
   --shadow-lift: var(--t-shadow-lift);
+}
+
+.font-wordmark {
+  font-family: var(--font-wordmark);
 }
 
 html {

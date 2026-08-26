@@ -1,16 +1,15 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Check, ChevronDown, Clock, Instagram, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { business } from "../config/business";
 import { faqs } from "../config/content";
 import { createWhatsAppUrl } from "../lib/whatsapp";
-import { Kicker, ScrollReveal, SectionHeading } from "../components/ui";
+import { Kicker, ScrollReveal, SectionHeading, usePrefersReducedMotion } from "../components/ui";
 
 type Errors = Partial<Record<"name" | "message" | "phone", string>>;
 
 export default function ContactPage() {
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
   const [form, setForm] = useState({ name: "", phone: "", subject: "Reserva de mesa", message: "" });
   const [errors, setErrors] = useState<Errors>({});
   const [sending, setSending] = useState(false);
@@ -50,18 +49,18 @@ export default function ContactPage() {
     <>
       <section className="relative border-b border-line bg-bg pt-32 pb-14 sm:pt-40 sm:pb-20" aria-label="Contato">
         <div className="shell">
-          <motion.div initial={reduce ? false : { opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
+          <div className={reduce ? "" : "anim-fade-up"}>
             <Kicker>Fala com a gente</Kicker>
-            <h1 className="display-tight mt-4 font-display uppercase text-cream">
+            <h1 className="display-tight mt-4 font-display text-cream">
               <span className="block text-5xl sm:text-7xl">
-                Reserva, evento <span className="text-ember">&amp; afins</span>
+                Reservas, eventos <em className="font-wordmark not-italic text-ember">&amp; afins</em>
               </span>
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-sand sm:text-lg">
-              Reservas, eventos fechados, parcerias ou aquele feedback sincero: manda ver. Respondemos rápido — geralmente
-              entre uma virada de burger e outra.
+              Reserva de mesa, aniversário, jantar de empresa ou aquele feedback sincero: manda ver. Reservas pelo WhatsApp,
+              como manda a tradição da casa.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -70,18 +69,13 @@ export default function ContactPage() {
           {/* formulário */}
           <div>
             {sent ? (
-              <motion.div
-                initial={reduce ? false : { opacity: 0, scale: 0.97 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="border border-leaf/40 bg-leaf/10 p-8 text-center"
-                role="status"
-              >
+              <div className={`border border-leaf/40 bg-leaf/10 p-8 text-center ${reduce ? "" : "anim-scale"}`} role="status">
                 <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-leaf text-bg">
                   <Check aria-hidden size={24} strokeWidth={3} />
                 </span>
-                <p className="mt-5 font-display text-2xl uppercase text-cream">Mensagem na chapa!</p>
+                <p className="mt-5 font-display text-2xl text-cream">Mensagem na mesa!</p>
                 <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-sand">
-                  Abrimos o WhatsApp com a sua mensagem pronta. É só conferir e enviar — nossa equipe responde por lá.
+                  Abrimos o WhatsApp com a sua mensagem pronta. É só conferir e enviar — a equipe responde por lá.
                 </p>
                 <button
                   type="button"
@@ -93,10 +87,10 @@ export default function ContactPage() {
                 >
                   Enviar outra mensagem
                 </button>
-              </motion.div>
+              </div>
             ) : (
               <form onSubmit={submit} className="border border-line bg-panel p-6 sm:p-9" noValidate>
-                <h2 className="font-display text-2xl uppercase tracking-wide text-cream">Manda a braba</h2>
+                <h2 className="font-display text-2xl text-cream">Deixe seu recado</h2>
                 <div className="mt-7 grid gap-5 sm:grid-cols-2">
                   <label className="block sm:col-span-1">
                     <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.2em] text-sand">Nome *</span>
@@ -127,7 +121,7 @@ export default function ContactPage() {
                     <select value={form.subject} onChange={(e) => set("subject", e.target.value)} className="field">
                       <option>Reserva de mesa</option>
                       <option>Evento fechado / aniversário</option>
-                      <option>Pedido e delivery</option>
+                      <option>Pedido / retirada</option>
                       <option>Parceria / fornecedor</option>
                       <option>Imprensa</option>
                       <option>Elogio, crítica ou sugestão</option>
@@ -140,7 +134,7 @@ export default function ContactPage() {
                       onChange={(e) => set("message", e.target.value)}
                       rows={5}
                       className={`field resize-none ${errors.message ? "field-error" : ""}`}
-                      placeholder="Data, número de pessoas, o que você precisa…"
+                      placeholder="Data, número de pessoas, ocasião…"
                       aria-invalid={Boolean(errors.message)}
                     />
                     {errors.message && <span className="mt-1 block text-xs text-chili">{errors.message}</span>}
@@ -149,7 +143,7 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={sending}
-                  className="mt-7 flex w-full items-center justify-center gap-2.5 bg-ember py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-bg transition-all duration-300 hover:bg-gold hover:shadow-ember disabled:opacity-60 sm:w-auto sm:px-10"
+                  className="mt-7 flex w-full items-center justify-center gap-2.5 border border-ember bg-ember py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-bg transition-all duration-300 hover:bg-transparent hover:text-ember disabled:opacity-60 sm:w-auto sm:px-10"
                 >
                   {sending ? "Abrindo WhatsApp…" : (
                     <>
@@ -171,13 +165,13 @@ export default function ContactPage() {
                 icon: <MessageCircle aria-hidden size={17} />,
                 title: "WhatsApp",
                 value: business.contact.whatsappDisplay,
-                note: "pedidos, reservas e eventos",
+                note: "reservas, pedidos e eventos",
                 href: createWhatsAppUrl(business.whatsappGreeting),
                 external: true,
               },
               {
                 icon: <Phone aria-hidden size={17} />,
-                title: "Telefone",
+                title: "Telefone da casa",
                 value: business.contact.phoneDisplay,
                 note: "horário de funcionamento",
                 href: `tel:${business.contact.phoneRaw}`,
@@ -195,7 +189,7 @@ export default function ContactPage() {
                 icon: <Instagram aria-hidden size={17} />,
                 title: "Instagram",
                 value: business.social.instagramHandle,
-                note: "novidades e agenda de shows",
+                note: "novidades e agenda da semana",
                 href: business.social.instagram,
                 external: true,
               },
@@ -228,7 +222,7 @@ export default function ContactPage() {
 
             <ScrollReveal delay={0.32}>
               <div className="border border-line bg-panel p-5">
-                <p className="flex items-center gap-2.5 font-display text-lg uppercase text-cream">
+                <p className="flex items-center gap-2.5 font-display text-lg text-cream">
                   <Clock aria-hidden size={16} className="text-ember" /> Horários
                 </p>
                 <dl className="mt-3 space-y-1.5">
@@ -252,10 +246,10 @@ export default function ContactPage() {
             kicker="FAQ"
             title={
               <>
-                Perguntas de <span className="text-ember">barriga vazia</span>
+                Antes de <em className="font-wordmark not-italic text-ember">chegar à mesa</em>
               </>
             }
-            description="O que mais perguntam antes do primeiro pedido. Não achou a resposta? Chama no WhatsApp."
+            description="O que mais perguntam antes da primeira visita. Não achou a resposta? Chama no WhatsApp."
           />
           <div>
             {faqs.map((f, i) => (
@@ -268,29 +262,16 @@ export default function ContactPage() {
                     aria-expanded={openFaq === i}
                     aria-controls={`faq-${i}`}
                   >
-                    <span className="font-display text-lg uppercase tracking-wide text-cream transition-colors hover:text-ember sm:text-xl">
-                      {f.q}
-                    </span>
+                    <span className="font-display text-lg text-cream transition-colors hover:text-ember sm:text-xl">{f.q}</span>
                     <ChevronDown
                       aria-hidden
                       size={18}
                       className={`shrink-0 text-ember transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`}
                     />
                   </button>
-                  <AnimatePresence initial={false}>
-                    {openFaq === i && (
-                      <motion.div
-                        id={`faq-${i}`}
-                        initial={reduce ? { opacity: 0 } : { opacity: 0, height: 0 }}
-                        animate={reduce ? { opacity: 1 } : { opacity: 1, height: "auto" }}
-                        exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0 }}
-                        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <p className="max-w-2xl pb-6 text-sm leading-relaxed text-sand sm:text-base">{f.a}</p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <div id={`faq-${i}`} className={`collapse ${openFaq === i ? "collapse-open" : ""}`}>
+                    <p className="max-w-2xl pb-6 text-sm leading-relaxed text-sand sm:text-base">{f.a}</p>
+                  </div>
                 </div>
               </ScrollReveal>
             ))}

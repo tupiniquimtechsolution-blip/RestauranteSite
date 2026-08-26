@@ -258,20 +258,37 @@ export function Marquee({ items, className = "", speed = 28 }: { items: string[]
   );
 }
 
-/** Logo — cloche (serviço à francesa) + wordmark tipográfica */
+/**
+ * Logo — reconstrução fiel do wordmark "CHEZ Amis" da identidade
+ * oficial (lettering + script manuscrito, como no Instagram/Google),
+ * acompanhada da cloche de serviço à francesa. Substituir pelo
+ * arquivo oficial em public/client-assets/logo/ quando disponível.
+ */
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <a href="#/" className="group flex items-center gap-2.5" aria-label="Chez Amis Bistrô — início">
-      <span className="relative grid h-9 w-9 place-items-center border border-ember/70 bg-panel text-ember transition-transform duration-300 group-hover:-rotate-6">
-        <ClocheIcon size={19} />
-        <span className="absolute -right-1 -top-1 h-2.5 w-2.5 border border-bg bg-gold" aria-hidden />
+    <a href="#/" className="group flex items-center gap-3" aria-label="Chez Amis Bistrô — início">
+      <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full border border-ember/60 bg-panel text-ember transition-transform duration-300 group-hover:-rotate-6">
+        <ClocheIcon size={20} />
       </span>
       <span className="leading-none">
-        <span className="block font-display text-lg uppercase tracking-wide text-cream">
-          Chez <span className="text-ember">Amis</span>
+        <span className="flex items-baseline gap-1.5">
+          <span className="font-display text-[13px] font-semibold uppercase tracking-[0.32em] text-cream">Chez</span>
+          <span className="font-wordmark pt-0.5 text-[30px] leading-none text-ember transition-colors duration-300 group-hover:text-gold">
+            Amis
+          </span>
         </span>
         {!compact && (
-          <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.42em] text-sand">Bistrô · Café · Bar</span>
+          <span className="mt-1.5 flex items-center gap-2 font-mono text-[8px] uppercase tracking-[0.32em] text-sand">
+            Bistrô
+            <span aria-hidden className="text-[7px] text-ember/80">
+              ✦
+            </span>
+            Café
+            <span aria-hidden className="text-[7px] text-ember/80">
+              ✦
+            </span>
+            Bar
+          </span>
         )}
       </span>
     </a>

@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   Bike,
@@ -20,42 +19,42 @@ import { business } from "../config/business";
 import { images } from "../config/images";
 import { formatBRL } from "../lib/format";
 import { createWhatsAppUrl, interestMessage } from "../lib/whatsapp";
-import { ScrollReveal, SectionHeading } from "./ui";
+import { Parallax, ScrollReveal, SectionHeading, usePrefersReducedMotion } from "./ui";
 
 /* ============================================================
-   SEÇÕES B — delivery, avaliações, localização, Instagram,
-   CTA final com parallax.
+   SEÇÕES B — retirada/delivery, avaliações, localização,
+   Instagram e CTA final. Motion 100% nativo (sem framer).
    ============================================================ */
 
 export function DeliverySection() {
   return (
-    <section className="border-t border-line bg-panel py-24 sm:py-28" aria-label="Delivery e retirada">
+    <section className="border-t border-line bg-panel py-24 sm:py-28" aria-label="Retirada e delivery">
       <div className="shell grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-20">
         <div>
           <SectionHeading
-            kicker="Chega quente"
+            kicker="Leve a França pra casa"
             title={
               <>
-                Do container <span className="text-ember">até você</span>
+                Da Haddock Lobo <em className="font-wordmark not-italic text-ember">até você</em>
               </>
             }
-            description="Entregamos com embalagem que respira — a crosta chega viva. Prefere buscar? Sai direto da chapa, no balcão."
+            description="Retire no balcão e leve os clássicos ainda quentes, ou peça pelo WhatsApp com entrega nas redondezas. Embalamos com cuidado de bistrô."
           />
           <div className="mt-9 grid gap-4 sm:grid-cols-2">
             <ScrollReveal>
               <div className="border border-line bg-bg p-5">
-                <Bike aria-hidden size={22} className="text-ember" />
-                <p className="mt-3 font-display text-xl uppercase text-cream">Delivery próprio</p>
-                <p className="mt-1.5 text-sm leading-relaxed text-sand">
-                  {business.delivery.areas.length} regiões atendidas a partir de {formatBRL(business.delivery.areas[0].fee)}
-                </p>
+                <Store aria-hidden size={22} className="text-ember" />
+                <p className="mt-3 font-display text-xl text-cream">Retirada no balcão</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-sand">Sem taxa — combine o horário pelo WhatsApp</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={0.08}>
               <div className="border border-line bg-bg p-5">
-                <Store aria-hidden size={22} className="text-ember" />
-                <p className="mt-3 font-display text-xl uppercase text-cream">Retirada no balcão</p>
-                <p className="mt-1.5 text-sm leading-relaxed text-sand">Sem taxa e saindo da chapa — avise o horário no pedido</p>
+                <Bike aria-hidden size={22} className="text-ember" />
+                <p className="mt-3 font-display text-xl text-cream">Delivery próprio</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-sand">
+                  {business.delivery.areas.length} regiões a partir de {formatBRL(business.delivery.areas[0].fee)}
+                </p>
               </div>
             </ScrollReveal>
           </div>
@@ -71,7 +70,7 @@ export function DeliverySection() {
           <div className="overflow-hidden border border-line bg-bg">
             <table className="w-full text-sm">
               <caption className="border-b border-line px-5 py-4 text-left font-mono text-[10px] uppercase tracking-[0.24em] text-sand">
-                Regiões e taxas (demonstrativo)
+                Regiões atendidas (valores demonstrativos)
               </caption>
               <thead>
                 <tr className="border-b border-line text-left font-mono text-[10px] uppercase tracking-[0.2em] text-sand">
@@ -100,7 +99,7 @@ export function DeliverySection() {
 export function Testimonials() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
   const count = testimonials.length;
 
   useEffect(() => {
@@ -125,10 +124,10 @@ export function Testimonials() {
             kicker="Quem prova, conta"
             title={
               <>
-                A rua já <span className="text-ember">falou</span>
+                A Haddock Lobo <em className="font-wordmark not-italic text-ember">já falou</em>
               </>
             }
-            description="Depoimentos demonstrativos para apresentação do projeto — as avaliações reais entram na personalização."
+            description="Depoimentos demonstrativos para apresentação do projeto — as avaliações reais (4,4★ com 1.148 notas no Google) entram na personalização."
           />
           <div className="mt-8 flex gap-2.5">
             <button
@@ -150,42 +149,33 @@ export function Testimonials() {
           </div>
         </div>
 
-        <div className="relative min-h-[430px] sm:min-h-[340px]" aria-live="polite">
-          <AnimatePresence mode="wait">
-            <motion.blockquote
-              key={index}
-              className="absolute inset-0 flex flex-col justify-between border border-line bg-panel p-8 sm:p-10"
-              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, y: -18 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div>
-                <div className="flex items-center gap-1" aria-label={`${t.rating} de 5 estrelas`}>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      aria-hidden
-                      size={15}
-                      className={i < Math.round(t.rating) ? "text-gold" : "text-line"}
-                      fill={i < Math.round(t.rating) ? "currentColor" : "none"}
-                    />
-                  ))}
-                  <span className="ml-2 font-mono text-xs text-sand">{t.rating.toFixed(1).replace(".", ",")}</span>
-                </div>
-                <p className="mt-6 font-display text-2xl uppercase leading-snug text-cream sm:text-3xl">“{t.text}”</p>
+        <div className="relative min-h-[440px] sm:min-h-[360px]" aria-live="polite">
+          <blockquote key={index} className={`absolute inset-0 flex flex-col justify-between border border-line bg-panel p-8 sm:p-10 ${reduce ? "" : "anim-fade-up"}`}>
+            <div>
+              <div className="flex items-center gap-1" aria-label={`${t.rating} de 5 estrelas`}>
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    aria-hidden
+                    size={15}
+                    className={i < Math.round(t.rating) ? "text-ember" : "text-line"}
+                    fill={i < Math.round(t.rating) ? "currentColor" : "none"}
+                  />
+                ))}
+                <span className="ml-2 font-mono text-xs text-sand">{t.rating.toFixed(1).replace(".", ",")}</span>
               </div>
-              <footer className="mt-8 flex items-center justify-between gap-4 border-t border-linesoft pt-5">
-                <cite className="not-italic">
-                  <span className="block font-semibold text-cream">{t.name}</span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-sand">{t.area}</span>
-                </cite>
-                <span className="border border-line bg-bg px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-gold">
-                  pediu: {t.item}
-                </span>
-              </footer>
-            </motion.blockquote>
-          </AnimatePresence>
+              <p className="mt-6 font-display text-2xl italic leading-snug text-cream sm:text-3xl">“{t.text}”</p>
+            </div>
+            <footer className="mt-8 flex items-center justify-between gap-4 border-t border-linesoft pt-5">
+              <cite className="not-italic">
+                <span className="block font-semibold text-cream">{t.name}</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-sand">{t.area}</span>
+              </cite>
+              <span className="border border-line bg-bg px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-gold">
+                pediu: {t.item}
+              </span>
+            </footer>
+          </blockquote>
         </div>
       </div>
 
@@ -196,7 +186,7 @@ export function Testimonials() {
             type="button"
             onClick={() => go(i)}
             aria-label={`Ver avaliação de ${tt.name}`}
-            className={`h-1.5 transition-all duration-400 ${i === index ? "w-10 bg-ember" : "w-5 bg-line hover:bg-sand/50"}`}
+            className={`h-1.5 transition-all duration-500 ${i === index ? "w-10 bg-ember" : "w-5 bg-line hover:bg-sand/50"}`}
           />
         ))}
       </div>
@@ -212,7 +202,7 @@ export function LocationSection() {
           kicker="Onde estamos"
           title={
             <>
-              Cola no <span className="text-ember">container</span>
+              Na esquina mais <em className="font-wordmark not-italic text-ember">charmosa</em> da Haddock
             </>
           }
           description={business.address.full}
@@ -224,14 +214,14 @@ export function LocationSection() {
               <iframe
                 title={`Mapa — ${business.address.full}`}
                 src={business.address.mapEmbedUrl}
-                className="h-full w-full grayscale-[35%] contrast-[1.05]"
+                className="h-full w-full grayscale-[30%] contrast-[1.05]"
                 loading="lazy"
               />
               <a
                 href={business.address.directionsUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="absolute bottom-4 left-4 flex items-center gap-2.5 bg-ember px-5 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-bg transition-all hover:bg-gold hover:shadow-ember"
+                className="absolute bottom-4 left-4 flex items-center gap-2.5 border border-ember bg-ember px-5 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-bg transition-all hover:bg-transparent hover:text-ember"
               >
                 <Navigation aria-hidden size={14} /> Traçar rota
               </a>
@@ -263,9 +253,7 @@ export function LocationSection() {
                   {business.hours.map((h) => (
                     <div key={h.days} className="flex items-center justify-between gap-4 text-sm">
                       <dt className="text-sand">{h.days}</dt>
-                      <dd className={`text-right font-mono text-xs ${h.time.startsWith("Fechado") ? "text-chili" : "text-cream"}`}>
-                        {h.time}
-                      </dd>
+                      <dd className={`text-right font-mono text-xs ${h.time.startsWith("Fechado") ? "text-chili" : "text-cream"}`}>{h.time}</dd>
                     </div>
                   ))}
                 </dl>
@@ -277,7 +265,7 @@ export function LocationSection() {
                 href={createWhatsAppUrl(interestMessage("fazer uma reserva de mesa"))}
                 target="_blank"
                 rel="noreferrer"
-                className="block border border-ember/60 p-5 text-center font-mono text-xs font-semibold uppercase tracking-[0.16em] text-ember transition-all hover:bg-ember hover:text-bg"
+                className="block border border-ember/70 p-5 text-center font-mono text-xs font-semibold uppercase tracking-[0.16em] text-ember transition-all hover:bg-ember hover:text-bg"
               >
                 Reservar mesa pelo WhatsApp
               </a>
@@ -291,7 +279,7 @@ export function LocationSection() {
 
 export function InstagramSection() {
   const [lightbox, setLightbox] = useState<number | null>(null);
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -304,6 +292,13 @@ export function InstagramSection() {
     return () => window.removeEventListener("keydown", onKey);
   }, [lightbox]);
 
+  useEffect(() => {
+    document.body.style.overflow = lightbox !== null ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [lightbox]);
+
   return (
     <section className="bg-bg py-24 sm:py-28" aria-label="Instagram">
       <div className="shell">
@@ -312,10 +307,10 @@ export function InstagramSection() {
             kicker={business.social.instagramHandle}
             title={
               <>
-                A brasa no <span className="text-ember">feed</span>
+                O bistrô <em className="font-wordmark not-italic text-ember">no feed</em>
               </>
             }
-            description="Bastidores, chope plugando e burger saindo da chapa — segue lá pra não perder a agenda de shows."
+            description="Bastidores da cozinha, taças servindo e o salão cheio — segue lá para a agenda da semana."
           />
           <ScrollReveal>
             <a
@@ -348,111 +343,96 @@ export function InstagramSection() {
           ))}
         </div>
         <p className="mt-4 font-mono text-[10px] text-sand/60">
-          Grade demonstrativa — o conteúdo real do {business.social.instagramHandle} entra na personalização.
+          Grade demonstrativa com fotos reais da casa — os posts entram via widget oficial na personalização.
         </p>
       </div>
 
       {/* lightbox */}
-      <AnimatePresence>
-        {lightbox !== null && (
-          <motion.div
-            className="fixed inset-0 z-[90] flex items-center justify-center bg-bg/92 p-4 backdrop-blur-sm sm:p-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setLightbox(null)}
-            role="dialog"
-            aria-modal="true"
-            aria-label={instagramTiles[lightbox].caption}
-          >
-            <motion.figure
-              className="relative w-full max-w-3xl"
-              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={instagramTiles[lightbox].image}
-                alt={instagramTiles[lightbox].caption}
-                className="max-h-[76vh] w-full border border-line object-cover"
-              />
-              <figcaption className="flex items-center justify-between gap-4 border border-t-0 border-line bg-panel px-5 py-4">
-                <span className="text-sm text-sand">{instagramTiles[lightbox].caption}</span>
-                <span className="flex shrink-0 items-center gap-1.5 font-mono text-xs text-ember">
-                  <Heart aria-hidden size={13} fill="currentColor" /> {instagramTiles[lightbox].likes}
-                </span>
-              </figcaption>
-              <div className="absolute -top-12 right-0 flex gap-2.5">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setLightbox((lightbox - 1 + instagramTiles.length) % instagramTiles.length);
-                  }}
-                  className="grid h-10 w-10 place-items-center border border-line bg-panel text-cream hover:border-ember hover:text-ember"
-                  aria-label="Foto anterior"
-                >
-                  <ChevronLeft aria-hidden size={17} />
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setLightbox((lightbox + 1) % instagramTiles.length);
-                  }}
-                  className="grid h-10 w-10 place-items-center border border-line bg-panel text-cream hover:border-ember hover:text-ember"
-                  aria-label="Próxima foto"
-                >
-                  <ChevronRight aria-hidden size={17} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLightbox(null)}
-                  className="grid h-10 w-10 place-items-center border border-line bg-panel text-cream hover:border-ember hover:text-ember"
-                  aria-label="Fechar foto"
-                >
-                  <X aria-hidden size={16} />
-                </button>
-              </div>
-            </motion.figure>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {lightbox !== null && (
+        <div
+          className={`fixed inset-0 z-[90] flex items-center justify-center bg-bg/92 p-4 backdrop-blur-sm sm:p-10 ${reduce ? "" : "anim-fade"}`}
+          onClick={() => setLightbox(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={instagramTiles[lightbox].caption}
+        >
+          <figure className={`relative w-full max-w-3xl ${reduce ? "" : "anim-scale"}`} onClick={(e) => e.stopPropagation()}>
+            <img
+              src={instagramTiles[lightbox].image}
+              alt={instagramTiles[lightbox].caption}
+              className="max-h-[76vh] w-full border border-line object-cover"
+            />
+            <figcaption className="flex items-center justify-between gap-4 border border-t-0 border-line bg-panel px-5 py-4">
+              <span className="text-sm text-sand">{instagramTiles[lightbox].caption}</span>
+              <span className="flex shrink-0 items-center gap-1.5 font-mono text-xs text-ember">
+                <Heart aria-hidden size={13} fill="currentColor" /> {instagramTiles[lightbox].likes}
+              </span>
+            </figcaption>
+            <div className="absolute -top-12 right-0 flex gap-2.5">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightbox((lightbox - 1 + instagramTiles.length) % instagramTiles.length);
+                }}
+                className="grid h-10 w-10 place-items-center border border-line bg-panel text-cream hover:border-ember hover:text-ember"
+                aria-label="Foto anterior"
+              >
+                <ChevronLeft aria-hidden size={17} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightbox((lightbox + 1) % instagramTiles.length);
+                }}
+                className="grid h-10 w-10 place-items-center border border-line bg-panel text-cream hover:border-ember hover:text-ember"
+                aria-label="Próxima foto"
+              >
+                <ChevronRight aria-hidden size={17} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setLightbox(null)}
+                className="grid h-10 w-10 place-items-center border border-line bg-panel text-cream hover:border-ember hover:text-ember"
+                aria-label="Fechar foto"
+              >
+                <X aria-hidden size={16} />
+              </button>
+            </div>
+          </figure>
+        </div>
+      )}
     </section>
   );
 }
 
 export function FinalCTA() {
-  const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [80, -80]);
-
   return (
-    <section ref={ref} className="relative overflow-hidden border-t border-line" aria-label="Faça seu pedido">
-      <motion.div className="absolute inset-0" style={reduce ? undefined : { y }} aria-hidden>
-        <img src={images.bgBrasa} alt="" className="h-[130%] w-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-bg/78" />
-      </motion.div>
+    <section className="relative overflow-hidden border-t border-line" aria-label="Faça sua reserva">
+      <div className="absolute inset-0 overflow-hidden" aria-hidden>
+        <Parallax className="h-full" speed={0.14}>
+          <img src={images.interior1} alt="" className="h-[120%] w-full object-cover" loading="lazy" />
+        </Parallax>
+        <div className="absolute inset-0 bg-bg/80" />
+      </div>
 
       <div className="shell relative py-28 text-center sm:py-36">
         <ScrollReveal>
-          <p className="font-mono text-[11px] uppercase tracking-[0.34em] text-gold">A chapa tá quente</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.34em] text-gold">A mesa está posta</p>
         </ScrollReveal>
         <ScrollReveal delay={0.1}>
-          <h2 className="display-tight mx-auto mt-5 max-w-3xl font-display text-5xl uppercase text-cream sm:text-7xl">
-            Bateu a fome? <span className="text-ember">A brasa resolve.</span>
+          <h2 className="display-tight mx-auto mt-5 max-w-3xl font-display text-5xl text-cream sm:text-7xl">
+            Bon appétit <em className="font-wordmark not-italic text-ember">começa aqui.</em>
           </h2>
         </ScrollReveal>
         <ScrollReveal delay={0.2}>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <a
               href="#/cardapio"
-              className="group flex items-center gap-3 bg-ember px-8 py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-bg transition-all duration-300 hover:bg-gold hover:shadow-ember"
+              className="group flex items-center gap-3 border border-ember bg-ember px-8 py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-bg transition-all duration-300 hover:bg-transparent hover:text-ember"
             >
-              Fazer pedido agora
+              Ver a carta
               <ArrowUpRight aria-hidden size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
             <a

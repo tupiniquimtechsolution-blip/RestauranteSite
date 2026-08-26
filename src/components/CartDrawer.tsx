@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
@@ -10,15 +9,18 @@ import { business } from "../config/business";
 import { formatBRL } from "../lib/format";
 import { buildOrderMessage, createWhatsAppUrl } from "../lib/whatsapp";
 import type { CheckoutInfo } from "../lib/whatsapp";
+import { usePrefersReducedMotion } from "./ui";
 
 /* ============================================================
    CARRINHO — drawer lateral + checkout via WhatsApp
+   (animações CSS nativas, sem framer-motion)
    ============================================================ */
 
 export function CartDrawer() {
   const { lines, isOpen, setOpen, setQty, remove, clear } = useCart();
   const [step, setStep] = useState<"cart" | "checkout">("cart");
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
+  const subtotal = useCartSubtotal(lines);
 
   useEffect(() => {
     if (!isOpen) setStep("cart");
@@ -39,77 +41,62 @@ export function CartDrawer() {
     return () => window.removeEventListener("keydown", onKey);
   }, [setOpen]);
 
-  const subtotal = useMemo(
-    () =>
-      lines.reduce((sum, l) => {
-        const item = getItemById(l.itemId);
-        return item ? sum + (item.price + getExtrasPrice(item, l.extras)) * l.qty : sum;
-      }, 0),
-    [lines],
-  );
+  if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div key="cart-wrapper" className="contents">
-          <motion.div
-            key="cart-backdrop"
-            className="fixed inset-0 z-[84] bg-bg/70 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setOpen(false)}
-            aria-hidden
-          />
-          <motion.aside
-            key="cart-drawer"
-            className="fixed inset-y-0 right-0 z-[85] flex w-full max-w-md flex-col border-l border-line bg-panel"
-            initial={reduce ? { opacity: 0 } : { x: "100%" }}
-            animate={reduce ? { opacity: 1 } : { x: 0 }}
-            exit={reduce ? { opacity: 0 } : { x: "100%" }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Seu pedido"
-          >
-            <header className="flex items-center justify-between border-b border-line px-6 py-5">
-              <div className="flex items-center gap-3">
-                {step === "checkout" && (
-                  <button
-                    type="button"
-                    onClick={() => setStep("cart")}
-                    className="grid h-9 w-9 place-items-center border border-line text-sand hover:border-ember hover:text-ember"
-                    aria-label="Voltar para o pedido"
-                  >
-                    <ArrowLeft aria-hidden size={16} />
-                  </button>
-                )}
-                <h2 className="font-display text-2xl uppercase text-cream">
-                  {step === "cart" ? "Seu pedido" : "Finalizar"}
-                </h2>
-              </div>
+    <>
+      <div
+        className={`fixed inset-0 z-[84] bg-bg/70 backdrop-blur-sm ${reduce ? "" : "anim-fade"}`}
+        onClick={() => setOpen(false)}
+        aria-hidden
+      />
+      <aside
+        className={`fixed inset-y-0 right-0 z-[85] flex w-full max-w-md flex-col border-l border-line bg-panel ${reduce ? "" : "anim-drawer"}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Seu pedido"
+      >
+        <header className="flex items-center justify-between border-b border-line px-6 py-5">
+          <div className="flex items-center gap-3">
+            {step === "checkout" && (
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={() => setStep("cart")}
                 className="grid h-9 w-9 place-items-center border border-line text-sand hover:border-ember hover:text-ember"
-                aria-label="Fechar pedido"
+                aria-label="Voltar para o pedido"
               >
-                <X aria-hidden size={16} />
+                <ArrowLeft aria-hidden size={16} />
               </button>
-            </header>
-
-            {lines.length === 0 ? (
-              <EmptyCart onClose={() => setOpen(false)} />
-            ) : step === "cart" ? (
-              <CartStep lines={lines} subtotal={subtotal} setQty={setQty} remove={remove} clear={clear} onNext={() => setStep("checkout")} />
-            ) : (
-              <CheckoutStep lines={lines} subtotal={subtotal} />
             )}
-          </motion.aside>
-        </div>
-      )}
-    </AnimatePresence>
+            <h2 className="font-display text-2xl text-cream">{step === "cart" ? "Seu pedido" : "Finalizar"}</h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="grid h-9 w-9 place-items-center border border-line text-sand hover:border-ember hover:text-ember"
+            aria-label="Fechar pedido"
+          >
+            <X aria-hidden size={16} />
+          </button>
+        </header>
+
+        {lines.length === 0 ? (
+          <EmptyCart onClose={() => setOpen(false)} />
+        ) : step === "cart" ? (
+          <CartStep lines={lines} subtotal={subtotal} setQty={setQty} remove={remove} clear={clear} onNext={() => setStep("checkout")} />
+        ) : (
+          <CheckoutStep lines={lines} subtotal={subtotal} />
+        )}
+      </aside>
+    </>
   );
+}
+
+function useCartSubtotal(lines: CartLine[]): number {
+  return lines.reduce((sum, l) => {
+    const item = getItemById(l.itemId);
+    return item ? sum + (item.price + getExtrasPrice(item, l.extras)) * l.qty : sum;
+  }, 0);
 }
 
 function EmptyCart({ onClose }: { onClose: () => void }) {
@@ -118,14 +105,14 @@ function EmptyCart({ onClose }: { onClose: () => void }) {
       <span className="grid h-16 w-16 place-items-center rounded-full border border-dashed border-line text-sand">
         <ShoppingBag aria-hidden size={24} />
       </span>
-      <p className="font-display text-2xl uppercase text-cream">Chapa fria por aqui</p>
-      <p className="text-sm leading-relaxed text-sand">Seu pedido está vazio. Bora escolher algo saindo da brasa?</p>
+      <p className="font-display text-2xl text-cream">A mesa ainda está vazia</p>
+      <p className="text-sm leading-relaxed text-sand">Que tal começar com um Steak Tartare ou uma Soupe à l'Oignon?</p>
       <Link
         to="/cardapio"
         onClick={onClose}
-        className="mt-2 bg-ember px-6 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-bg transition-all hover:bg-gold"
+        className="mt-2 border border-ember bg-ember px-6 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-bg transition-all hover:bg-transparent hover:text-ember"
       >
-        Ver cardápio
+        Ver a carta
       </Link>
     </div>
   );
@@ -159,7 +146,7 @@ function CartStep({
               <img src={item.image} alt="" className="h-16 w-16 shrink-0 border border-line object-cover" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-3">
-                  <p className="font-display text-base uppercase leading-tight text-cream">{item.name}</p>
+                  <p className="font-display text-base leading-tight text-cream">{item.name}</p>
                   <button
                     type="button"
                     onClick={() => remove(line.key)}
@@ -169,9 +156,7 @@ function CartStep({
                     <Trash2 aria-hidden size={15} />
                   </button>
                 </div>
-                {line.extras.length > 0 && (
-                  <p className="mt-1 text-xs text-sand">+ {line.extras.join(" · ")}</p>
-                )}
+                {line.extras.length > 0 && <p className="mt-1 text-xs text-sand">+ {line.extras.join(" · ")}</p>}
                 {line.note && <p className="mt-1 text-xs italic text-sand/70">“{line.note}”</p>}
                 <div className="mt-3 flex items-center justify-between">
                   <div className="flex items-center border border-line" role="group" aria-label={`Quantidade de ${item.name}`}>
@@ -219,7 +204,7 @@ function CartStep({
         <button
           type="button"
           onClick={onNext}
-          className="mt-4 w-full bg-ember py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-bg transition-all hover:bg-gold hover:shadow-ember"
+          className="mt-4 w-full border border-ember bg-ember py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-bg transition-all hover:bg-transparent hover:text-ember"
         >
           Continuar
         </button>
@@ -232,7 +217,7 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
   const { clear, setOpen } = useCart();
   const [info, setInfo] = useState<CheckoutInfo>({
     name: "",
-    mode: "entrega",
+    mode: "retirada",
     area: business.delivery.areas[0].name,
     address: "",
     payment: "Pix",
@@ -246,8 +231,7 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
   const fee = info.mode === "entrega" ? area.fee : 0;
   const total = subtotal + fee;
 
-  const set = <K extends keyof CheckoutInfo>(key: K, value: CheckoutInfo[K]) =>
-    setInfo((p) => ({ ...p, [key]: value }));
+  const set = <K extends keyof CheckoutInfo>(key: K, value: CheckoutInfo[K]) => setInfo((p) => ({ ...p, [key]: value }));
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -282,7 +266,7 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
         <fieldset>
           <legend className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-sand">Como quer receber?</legend>
           <div className="grid grid-cols-2 gap-2">
-            {(["entrega", "retirada"] as const).map((m) => (
+            {(["retirada", "entrega"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
@@ -292,7 +276,7 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
                   info.mode === m ? "border-ember bg-ember/10 text-ember" : "border-line text-sand hover:border-sand/50"
                 }`}
               >
-                {m === "entrega" ? "Entrega" : "Retirada"}
+                {m === "retirada" ? "Retirada" : "Entrega"}
               </button>
             ))}
           </div>
@@ -329,8 +313,9 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
           <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.2em] text-sand">Pagamento</span>
           <select value={info.payment} onChange={(e) => set("payment", e.target.value)} className="field">
             <option>Pix</option>
-            <option>Cartão na entrega</option>
+            <option>Cartão na entrega/retirada</option>
             <option>Dinheiro</option>
+            <option>Vale-refeição (Alelo, Sodexo, Ticket, VR)</option>
           </select>
         </label>
 
@@ -342,13 +327,8 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
         )}
 
         <label className="block">
-          <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.2em] text-sand">Cupom (se tiver)</span>
-          <input type="text" value={info.coupon} onChange={(e) => set("coupon", e.target.value.toUpperCase())} className="field" placeholder="Ex.: BLACKLABEL" />
-        </label>
-
-        <label className="block">
           <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.2em] text-sand">Observações gerais</span>
-          <textarea rows={2} value={info.note} onChange={(e) => set("note", e.target.value)} className="field resize-none" placeholder="Portaria, referência, alergias…" />
+          <textarea rows={2} value={info.note} onChange={(e) => set("note", e.target.value)} className="field resize-none" placeholder="Alergias, portaria, horário de retirada…" />
         </label>
       </div>
 
@@ -360,7 +340,7 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
           </div>
           <div className="flex justify-between text-sand">
             <dt>{info.mode === "entrega" ? `Entrega · ${info.area}` : "Retirada no balcão"}</dt>
-            <dd>{fee > 0 ? formatBRL(fee) : "grátis"}</dd>
+            <dd>{fee > 0 ? formatBRL(fee) : "sem taxa"}</dd>
           </div>
           <div className="flex justify-between border-t border-linesoft pt-2 text-base">
             <dt className="font-semibold text-cream">Total estimado</dt>
@@ -369,7 +349,7 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
         </dl>
         <button
           type="submit"
-          className="mt-4 flex w-full items-center justify-center gap-2.5 bg-ember py-4 font-mono text-xs font-semibold uppercase tracking-[0.16em] text-bg transition-all hover:bg-gold hover:shadow-ember"
+          className="mt-4 flex w-full items-center justify-center gap-2.5 border border-ember bg-ember py-4 font-mono text-xs font-semibold uppercase tracking-[0.16em] text-bg transition-all hover:bg-transparent hover:text-ember"
         >
           Enviar pedido no WhatsApp <ExternalLink aria-hidden size={14} />
         </button>
@@ -384,30 +364,22 @@ function CheckoutStep({ lines, subtotal }: { lines: CartLine[]; subtotal: number
 /** CTA persistente no mobile — "Ver pedido — R$ XX" */
 export function MobileOrderBar() {
   const { count, subtotal, setOpen } = useCart();
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
+  if (count === 0) return null;
+
   return (
-    <AnimatePresence>
-      {count > 0 && (
-        <motion.div
-          className="fixed inset-x-0 bottom-0 z-[62] border-t border-line bg-panel2/95 p-3 backdrop-blur-md md:hidden"
-          initial={reduce ? { opacity: 0 } : { y: 72 }}
-          animate={reduce ? { opacity: 1 } : { y: 0 }}
-          exit={reduce ? { opacity: 0 } : { y: 72 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="flex w-full items-center justify-between bg-ember px-5 py-3.5 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-bg transition-colors active:bg-gold"
-          >
-            <span className="flex items-center gap-2.5">
-              <span className="grid h-6 w-6 place-items-center bg-bg/15 font-display text-sm">{count}</span>
-              Ver pedido
-            </span>
-            <span className="font-display text-base normal-case tracking-normal">{formatBRL(subtotal)}</span>
-          </button>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className={`fixed inset-x-0 bottom-0 z-[62] border-t border-line bg-panel2/95 p-3 backdrop-blur-md md:hidden ${reduce ? "" : "anim-fade-up"}`}>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex w-full items-center justify-between border border-ember bg-ember px-5 py-3.5 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-bg transition-colors active:bg-emberdeep"
+      >
+        <span className="flex items-center gap-2.5">
+          <span className="grid h-6 w-6 place-items-center bg-bg/15 font-display text-sm">{count}</span>
+          Ver pedido
+        </span>
+        <span className="font-display text-base normal-case tracking-normal">{formatBRL(subtotal)}</span>
+      </button>
+    </div>
   );
 }

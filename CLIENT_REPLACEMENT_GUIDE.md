@@ -16,8 +16,10 @@ As variáveis `--t-*` são injetadas no `<head>` pelo `App.tsx` e consumidas pel
 
 **Fontes:** carregadas em `index.html` (bloco Google Fonts). O mapeamento `--font-display/--font-body/--font-mono` vive em `src/index.css`.
 
-**Logo:** componente `Logo()` em `src/components/ui.tsx` (SVG tipográfico). Substitua pelo arquivo oficial quando houver.
-**Favicon:** `public/favicon.svg`.
+**Logo:** o componente `Logo()` em `src/components/ui.tsx` reconstrói fielmente o wordmark "CHEZ Amis" (lettering + script
+Parisienne + cloche), porque o download do arquivo oficial é bloqueado pelo Instagram. Para usar o logo oficial: salve em
+`public/client-assets/logo/logo.svg` (ou `.png`) e troque o corpo do `Logo()` por um `<img src="/client-assets/logo/logo.svg" />`.
+**Favicon:** `public/favicon.svg` (cloche verde-garrafa/latão — trocar pelo oficial mantendo o formato SVG).
 
 ---
 

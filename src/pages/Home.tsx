@@ -12,16 +12,16 @@ export default function Home() {
       <MarqueeStrip />
 
       {/* cardápio em destaque */}
-      <section id="cardapio-home" className="bg-bg py-24 sm:py-28" aria-label="Cardápio em destaque">
+      <section id="carta" className="bg-bg py-24 sm:py-28" aria-label="Cardápio em destaque">
         <div className="shell">
           <SectionHeading
-            kicker="Cardápio"
+            kicker="La Carte"
             title={
               <>
-                O que sai da <span className="text-ember">chapa</span>
+                O que sai <em className="font-wordmark not-italic text-ember">da cozinha</em>
               </>
             }
-            description="Os queridinhos da casa — toque em um item para ver ingredientes e personalizar com extras. O pedido fecha no WhatsApp."
+            description="Os clássicos da casa — toque em um item para ver ingredientes e personalizar. Reservas e pedidos fecham no WhatsApp."
           />
           <div className="mt-12">
             <MenuBoard items={menuItems} mode="home" />

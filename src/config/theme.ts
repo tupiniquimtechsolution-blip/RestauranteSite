@@ -1,48 +1,53 @@
 /**
  * ============================================================
- * IDENTIDADE VISUAL — PORTO BAA'R BLACK
+ * IDENTIDADE VISUAL — CHEZ AMIS BISTRÔ
  * ------------------------------------------------------------
- * Toda a paleta, tipografia, raios e sombras do site saem deste
- * arquivo. Para trocar a identidade de um cliente, edite APENAS
- * os tokens abaixo — os componentes leem as variáveis --t-*.
+ * Paleta derivada da identidade real do bistrô (fachada e salão
+ * verde-garrafa, lettering creme, detalhes em latão/dourado e
+ * toques de vinho). Tipografia: Fraunces (display) + Parisienne
+ * (wordmark) + Karla (texto) + IBM Plex Mono (rótulos).
+ * Para trocar a identidade de um cliente, edite APENAS os
+ * tokens abaixo — os componentes leem as variáveis --t-*.
  * ============================================================
  */
 
 export const theme = {
   colors: {
-    /** fundo geral da página (carvão quente, nunca preto puro) */
-    bg: "#0d0b09",
+    /** fundo geral — verde-garrafa profundo (nunca preto puro) */
+    bg: "#0f1712",
     /** superfícies / cards */
-    panel: "#16120e",
+    panel: "#16211a",
     /** superfícies elevadas (hover, inputs) */
-    panel2: "#1e1812",
+    panel2: "#1c2a21",
     /** linhas e bordas */
-    line: "#2c241c",
-    linesoft: "#231d16",
-    /** texto principal (off-white quente) */
-    cream: "#f2ead9",
-    /** texto secundário */
-    sand: "#a89b8a",
-    /** cor primária — brasa */
-    ember: "#ff6b2c",
+    line: "#2b3d31",
+    linesoft: "#223128",
+    /** texto principal — marfim */
+    cream: "#f2ecdc",
+    /** texto secundário — areia esverdeada */
+    sand: "#a7b3a3",
+    /** cor primária — latão (CTAs) */
+    ember: "#d4a94f",
     /** primária em hover / profundidade */
-    emberdeep: "#d94f17",
-    /** acento secundário — dourado de chope */
-    gold: "#e3a83e",
+    emberdeep: "#b98c39",
+    /** acento — champanhe (preços, detalhes) */
+    gold: "#e6cf9a",
     /** semânticas */
-    leaf: "#8fbf6b",
-    chili: "#e4573f",
+    leaf: "#7ea88b",
+    /** vinho — bordô (tags, alertas quentes) */
+    chili: "#b0554d",
   },
-  radius: "0.5rem",
+  radius: "0.375rem",
   shadows: {
-    /** brilho quente para CTAs e destaques */
-    ember: "0 12px 40px -12px rgba(255,107,44,0.45)",
+    /** brilho quente de latão para CTAs e destaques */
+    ember: "0 12px 40px -12px rgba(212,169,79,0.4)",
     /** elevação padrão de cards */
     lift: "0 24px 60px -24px rgba(0,0,0,0.75)",
   },
   fonts: {
-    display: '"Anton", sans-serif',
-    body: '"Sora", sans-serif',
+    display: '"Fraunces", serif',
+    wordmark: '"Parisienne", cursive',
+    body: '"Karla", sans-serif',
     mono: '"IBM Plex Mono", monospace',
   },
 } as const;
