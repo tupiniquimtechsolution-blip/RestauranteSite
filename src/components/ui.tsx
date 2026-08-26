@@ -1,19 +1,78 @@
-import { motion, useInView, useReducedMotion, animate } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
-import { Flame } from "lucide-react";
+import type { CSSProperties, ReactNode, RefObject } from "react";
+
+/** Ícone de cloche (serviço à francesa) — desenho próprio em SVG */
+export function ClocheIcon({ size = 16, className = "" }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M12 5a8 8 0 0 1 8 8H4a8 8 0 0 1 8-8Z" />
+      <path d="M2.5 16.5h19" />
+      <path d="M12 5V3.5" />
+      <circle cx="12" cy="3" r="0.9" fill="currentColor" stroke="none" />
+      <path d="M5 19.5h14" />
+    </svg>
+  );
+}
 
 /* ============================================================
-   Blocos de UI reutilizáveis: reveal, cabeçalho de seção,
-   contadores, letreiro e logo.
+   Motion system nativo — sem dependências externas.
+   Scroll reveal (IntersectionObserver), parallax (rAF),
+   contadores e letreiro. Tudo respeita prefers-reduced-motion.
    ============================================================ */
 
+/** Detecta prefers-reduced-motion reativamente */
+export function usePrefersReducedMotion(): boolean {
+  const [reduce, setReduce] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = (e: MediaQueryListEvent) => setReduce(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return reduce;
+}
+
+/** Observa a entrada do elemento no viewport (uma única vez) */
+export function useInViewOnce<T extends Element>(margin = "-60px"): [RefObject<T>, boolean] {
+  const ref = useRef<T>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || inView) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: margin, threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [margin, inView]);
+  return [ref, inView];
+}
+
+/** Scroll reveal — fade + translate + blur, com delay configurável */
 export function ScrollReveal({
   children,
   delay = 0,
   y = 28,
-  className,
-  once = true,
+  className = "",
 }: {
   children: ReactNode;
   delay?: number;
@@ -21,23 +80,68 @@ export function ScrollReveal({
   className?: string;
   once?: boolean;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
+  const [ref, inView] = useInViewOnce<HTMLDivElement>();
+  const shown = reduce || inView;
   return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y, filter: "blur(6px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once, margin: "-60px" }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      ref={ref}
+      className={`reveal ${shown ? "is-in" : ""} ${className}`}
+      style={{ "--reveal-y": `${y}px`, transitionDelay: `${delay}s` } as CSSProperties}
     >
       {children}
-    </motion.div>
+    </div>
+  );
+}
+
+/** Parallax suave via requestAnimationFrame (GPU-friendly) */
+export function Parallax({
+  speed = 0.12,
+  className = "",
+  children,
+}: {
+  speed?: number;
+  className?: string;
+  children: ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = usePrefersReducedMotion();
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduce) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const center = r.top + r.height / 2 - window.innerHeight / 2;
+      el.style.transform = `translate3d(0, ${(-center * speed).toFixed(1)}px, 0)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [speed, reduce]);
+
+  return (
+    <div className={className}>
+      <div ref={ref} className={reduce ? undefined : "will-change-transform"}>
+        {children}
+      </div>
+    </div>
   );
 }
 
 export function Kicker({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <p className={`font-mono text-[11px] sm:text-xs uppercase tracking-[0.32em] text-ember ${className}`}>
+    <p className={`font-mono text-[11px] uppercase tracking-[0.32em] text-ember sm:text-xs ${className}`}>
       <span aria-hidden className="mr-2 inline-block h-[2px] w-6 bg-ember align-middle" />
       {children}
     </p>
@@ -60,7 +164,7 @@ export function SectionHeading({
   return (
     <div className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
       <ScrollReveal>
-        <Kicker className={align === "center" ? "justify-center" : ""}>{kicker}</Kicker>
+        <Kicker>{kicker}</Kicker>
       </ScrollReveal>
       <ScrollReveal delay={0.08}>
         <h2
@@ -80,7 +184,7 @@ export function SectionHeading({
   );
 }
 
-/** Contador animado que respeita prefers-reduced-motion */
+/** Contador animado (rAF) que respeita prefers-reduced-motion */
 export function AnimatedCounter({
   value,
   suffix = "",
@@ -92,10 +196,9 @@ export function AnimatedCounter({
   decimals?: number;
   className?: string;
 }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const reduce = useReducedMotion();
-  const [display, setDisplay] = useState(reduce ? value : 0);
+  const [ref, inView] = useInViewOnce<HTMLSpanElement>("-40px");
+  const reduce = usePrefersReducedMotion();
+  const [display, setDisplay] = useState(0);
 
   useEffect(() => {
     if (!inView) return;
@@ -103,12 +206,17 @@ export function AnimatedCounter({
       setDisplay(value);
       return;
     }
-    const controls = animate(0, value, {
-      duration: 1.8,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => setDisplay(v),
-    });
-    return () => controls.stop();
+    let raf = 0;
+    const start = performance.now();
+    const duration = 1600;
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 4);
+      setDisplay(value * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [inView, value, reduce]);
 
   const formatted =
@@ -124,14 +232,14 @@ export function AnimatedCounter({
   );
 }
 
-/** Letreiro contínuo (marquee) — conteúdo duplicado p/ loop perfeito */
+/** Letreiro contínuo (marquee) — CSS puro, pausa no hover */
 export function Marquee({ items, className = "", speed = 28 }: { items: string[]; className?: string; speed?: number }) {
   const row = (ariaHidden: boolean) => (
     <div aria-hidden={ariaHidden || undefined} className="flex shrink-0 items-center">
       {items.map((item, i) => (
         <span key={i} className="flex items-center">
           <span className="px-5 font-display text-sm uppercase tracking-[0.18em] text-cream/85 sm:text-base">{item}</span>
-          <Flame aria-hidden size={14} className="text-ember" />
+          <ClocheIcon size={14} className="text-ember" />
         </span>
       ))}
     </div>
@@ -150,20 +258,20 @@ export function Marquee({ items, className = "", speed = 28 }: { items: string[]
   );
 }
 
-/** Logo tipográfica em SVG — substituir por arquivo oficial quando houver */
+/** Logo — cloche (serviço à francesa) + wordmark tipográfica */
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <a href="#/" className="group flex items-center gap-2.5" aria-label="Porto Baa'R Black — início">
-      <span className="relative grid h-9 w-9 place-items-center bg-ember text-bg transition-transform duration-300 group-hover:-rotate-6">
-        <Flame aria-hidden size={19} strokeWidth={2.4} />
+    <a href="#/" className="group flex items-center gap-2.5" aria-label="Chez Amis Bistrô — início">
+      <span className="relative grid h-9 w-9 place-items-center border border-ember/70 bg-panel text-ember transition-transform duration-300 group-hover:-rotate-6">
+        <ClocheIcon size={19} />
         <span className="absolute -right-1 -top-1 h-2.5 w-2.5 border border-bg bg-gold" aria-hidden />
       </span>
       <span className="leading-none">
         <span className="block font-display text-lg uppercase tracking-wide text-cream">
-          Porto Baa<span className="text-ember">'R</span>
+          Chez <span className="text-ember">Amis</span>
         </span>
         {!compact && (
-          <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.42em] text-sand">Black · Est. 2019</span>
+          <span className="mt-0.5 block font-mono text-[9px] uppercase tracking-[0.42em] text-sand">Bistrô · Café · Bar</span>
         )}
       </span>
     </a>

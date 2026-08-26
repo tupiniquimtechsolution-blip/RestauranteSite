@@ -1,10 +1,8 @@
 @import "tailwindcss";
 
 /* ============================================================
-   PORTO BAA'R BLACK — design tokens
-   As cores/fontes reais vivem em src/config/theme.ts e são
-   injetadas como variáveis --t-*. Este bloco apenas as mapeia
-   para as utilities do Tailwind v4.
+   CHEZ AMIS BISTRÔ — design tokens
+   Cores/fontes reais em src/config/theme.ts → variáveis --t-*.
    ============================================================ */
 @theme inline {
   --color-bg: var(--t-bg);
@@ -31,8 +29,8 @@
 }
 
 html {
-  background: var(--t-bg, #0d0b09);
-  color: var(--t-cream, #f2ead9);
+  background: var(--t-bg);
+  color: var(--t-cream);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
@@ -81,8 +79,8 @@ body {
   inset: -50%;
   z-index: 70;
   pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.045;
+  background-image: url("image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain-shift 9s steps(6) infinite;
 }
 
@@ -94,48 +92,134 @@ body {
   80% { transform: translate(6%, 5%); }
 }
 
-/* ---------- letreiro / marquee ---------- */
-@keyframes marquee-x {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+/* ============================================================
+   MOTION SYSTEM (nativo)
+   ============================================================ */
+
+/* scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 28px));
+  filter: blur(5px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.7s ease;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
 }
 
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee-x var(--marquee-speed, 28s) linear infinite;
+/* entrada na carga (hero / páginas) */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(26px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.animate-rise {
+  animation: rise-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.marquee-paused:hover .marquee-track {
-  animation-play-state: paused;
+/* troca de conteúdo (carrosséis, storytelling) */
+@keyframes swap-in {
+  from { opacity: 0; transform: translateX(26px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-swap {
+  animation: swap-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ---------- flutuação suave (hero) ---------- */
+@keyframes swap-soft {
+  from { opacity: 0; transform: scale(1.03); }
+  to { opacity: 1; transform: none; }
+}
+.animate-swap-soft {
+  animation: swap-soft 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* overlays: fade, drawer, modal */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade {
+  animation: fade-in 0.3s ease both;
+}
+
+@keyframes drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+.animate-drawer {
+  animation: drawer-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(40px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+.animate-pop {
+  animation: pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes bar-up {
+  from { opacity: 0; transform: translateY(80px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-bar-up {
+  animation: bar-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* flutuação e pulso (decorativos) */
 @keyframes floaty {
-  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
-  50% { transform: translateY(-16px) rotate(1.2deg); }
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-14px) rotate(1deg); }
 }
-
 .animate-floaty {
   animation: floaty 7s ease-in-out infinite;
 }
 
 @keyframes ember-pulse {
-  0%, 100% { opacity: 0.55; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.06); }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
 }
-
 .animate-ember {
-  animation: ember-pulse 4.5s ease-in-out infinite;
+  animation: ember-pulse 5s ease-in-out infinite;
 }
 
-/* ---------- anel giratório ---------- */
 @keyframes spin-slow {
   to { transform: rotate(360deg); }
 }
-
 .animate-spin-slow {
-  animation: spin-slow 32s linear infinite;
+  animation: spin-slow 36s linear infinite;
+}
+
+/* letreiro / marquee */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x var(--marquee-speed, 28s) linear infinite;
+}
+.marquee-paused:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* accordion (FAQ) — grid-rows, sem JS de altura */
+.collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.collapsible.open {
+  grid-template-rows: 1fr;
+}
+.collapsible > div {
+  overflow: hidden;
 }
 
 /* ---------- foco visível (a11y) ---------- */
@@ -156,17 +240,14 @@ body {
   color: var(--t-cream);
   transition: border-color 0.2s ease, background 0.2s ease;
 }
-
 .field::placeholder {
   color: color-mix(in srgb, var(--t-sand) 65%, transparent);
 }
-
 .field:focus {
   border-color: var(--t-ember);
   outline: none;
   background: var(--t-panel);
 }
-
 .field-error {
   border-color: var(--t-chili);
 }
@@ -187,7 +268,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--t-ember);
 }
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -195,16 +275,32 @@ body {
   scrollbar-width: none;
 }
 
-/* ---------- reduced motion: corta animações decorativas ---------- */
+/* ---------- reduced motion: corta animações ---------- */
 @media (prefers-reduced-motion: reduce) {
   .marquee-track,
+  .animate-rise,
+  .animate-swap,
+  .animate-swap-soft,
+  .animate-drawer,
+  .animate-pop,
+  .animate-bar-up,
   .animate-floaty,
   .animate-ember,
-  .animate-spin-slow {
+  .animate-spin-slow,
+  .animate-fade {
     animation: none !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
   }
   .grain::before {
     animation: none !important;
+  }
+  .collapsible {
+    transition: none !important;
   }
   *,
   *::before,

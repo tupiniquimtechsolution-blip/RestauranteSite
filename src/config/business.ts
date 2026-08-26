@@ -1,11 +1,11 @@
 /**
  * ============================================================
- * DADOS DO ESTABELECIMENTO — fonte única da verdade
+ * DADOS DO ESTABELECIMENTO — Chez Amis Bistrô
  * ------------------------------------------------------------
- * Todos os textos institucionais, contatos, endereço, horários,
- * delivery e links saem deste arquivo. Nada fica hardcoded nos
- * componentes. (Conteúdo demonstrativo — substitua pelos dados
- * reais seguindo o CLIENT_REPLACEMENT_GUIDE.md)
+ * Fonte única da verdade: contatos, endereço, horários, delivery
+ * e links. Dados reais extraídos do Google (Maps/Busca) e do
+ * Instagram oficial @chezamis.bistro. Itens marcados como
+ * demonstrativos devem ser confirmados com o proprietário.
  * ============================================================
  */
 
@@ -17,79 +17,83 @@ export interface Stat {
 }
 
 export const business = {
-  name: "Porto Baa'R Black",
-  shortName: "Porto Black",
-  legalName: "Porto Baa'R Black Bar e Hamburgueria Ltda.",
-  slogan: "Bar container, brasa & chope artesanal",
-  tagline: "O lado black da brasa",
+  name: "Chez Amis Bistrô",
+  shortName: "Chez Amis",
+  legalName: "Chez Amis Bistrô, Café & Bar",
+  slogan: "Um francês descomplicado na Haddock Lobo",
+  tagline: "Francês descomplicado",
   description:
-    "Bar container e hamburgueria artesanal no Tatuapé, São Paulo. Smash burgers prensados na brasa, chopes artesanais em 12 torneiras, drinks autorais e música ao vivo toda semana. Delivery e retirada pelo WhatsApp.",
-  since: 2019,
-  cnpj: "12.345.678/0001-90 (demonstrativo)",
+    "Bistrô francês em Cerqueira César, São Paulo. Clássicos como steak tartare na ponta da faca, beef Wellington e sopa de cebola, menu executivo no almoço e o menu degustação Sabores da França. Aberto todos os dias, das 12h às 23h. Reservas pelo WhatsApp.",
+  /** Ano de abertura — confirmar com o proprietário (demonstrativo) */
+  since: 2022,
 
   contact: {
-    phoneDisplay: "(11) 2091-0000",
-    phoneRaw: "+551120910000",
+    phoneDisplay: "(11) 3129-4930",
+    phoneRaw: "+551131294930",
     /** DDI + DDD + número, apenas dígitos — usado em createWhatsAppUrl() */
-    whatsapp: "5511976543210",
-    whatsappDisplay: "(11) 97654-3210",
-    email: "contato@portobaarblack.com.br",
+    whatsapp: "5511945044541",
+    whatsappDisplay: "(11) 94504-4541",
+    email: "reservas@chezamisbistro.com.br",
   },
 
   social: {
-    instagram: "https://www.instagram.com/portobaarblack/",
-    instagramHandle: "@portobaarblack",
-    facebook: "https://www.facebook.com/portobaarblack",
-    tiktok: "https://www.tiktok.com/@portobaarblack",
+    instagram: "https://www.instagram.com/chezamis.bistro/",
+    instagramHandle: "@chezamis.bistro",
+    facebook: "",
+    tiktok: "",
   },
 
   address: {
-    street: "Rua Itapura, 823",
-    complement: "Container em frente à praça",
-    neighborhood: "Tatuapé",
+    street: "Rua Haddock Lobo, 74",
+    complement: "Com valet na porta",
+    neighborhood: "Cerqueira César",
     city: "São Paulo",
     state: "SP",
-    zip: "03310-000",
-    full: "Rua Itapura, 823 — Tatuapé, São Paulo/SP",
-    /** coordenadas usadas no mapa e no link de rota */
-    lat: -23.5435,
-    lng: -46.5668,
-    /** iframe do OpenStreetMap — troque pelo embed do Google Maps se preferir */
+    zip: "01414-000",
+    full: "Rua Haddock Lobo, 74 — Cerqueira César, São Paulo/SP",
+    /** coordenadas reais (Google Maps) */
+    lat: -23.5545107,
+    lng: -46.6581815,
     mapEmbedUrl:
-      "https://www.openstreetmap.org/export/embed.html?bbox=-46.5838%2C-23.5525%2C-46.5498%2C-23.5345&layer=mapnik&marker=-23.5435%2C-46.5668",
-    directionsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.5435,-46.5668",
+      "https://www.openstreetmap.org/export/embed.html?bbox=-46.6672%2C-23.5590%2C-46.6492%2C-23.5500&layer=mapnik&marker=-23.5545107%2C-46.6581815",
+    directionsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=Rua+Haddock+Lobo,+74+-+Cerqueira+C%C3%A9sar,+S%C3%A3o+Paulo",
+    /** link oficial da ficha no Google */
+    googleMapsUrl:
+      "https://www.google.com/maps/place/Chez+Amis+Bistr%C3%B4/data=!4m2!3m1!1s0x94ce590b0e7a1df9:0xacb9edec9a5753c5",
   },
 
   hours: [
-    { days: "Segunda", time: "Fechado — dia de brasa fria" },
-    { days: "Terça a Quinta", time: "18h — 00h" },
-    { days: "Sexta e Sábado", time: "18h — 01h" },
-    { days: "Domingo", time: "17h — 23h" },
+    { days: "Segunda a Domingo", time: "12h — 23h" },
+    { days: "Menu executivo", time: "Seg a Sex · 12h — 16h" },
+    { days: "Cozinha", time: "Almoço, tarde e jantar contínuos" },
   ],
 
+  /** Avaliação real exibida no Google (1.148 avaliações) */
+  rating: { value: 4.4, count: 1148, source: "Google" },
+
   delivery: {
-    minOrder: 35,
-    note: "Taxas demonstrativas — confirme o valor final no WhatsApp. Pedidos até 45 min antes do fechamento.",
+    minOrder: 60,
+    note: "Retirada na porta e encomendas pelo WhatsApp. Taxas demonstrativas — confirme o valor final na mensagem.",
     areas: [
-      { name: "Tatuapé", fee: 6.9, time: "30–40 min" },
-      { name: "Anália Franco", fee: 8.9, time: "35–45 min" },
-      { name: "Vila Formosa", fee: 8.9, time: "35–50 min" },
-      { name: "Mooca", fee: 10.9, time: "40–55 min" },
-      { name: "Penha", fee: 10.9, time: "40–55 min" },
-      { name: "Aricanduva", fee: 12.9, time: "45–60 min" },
+      { name: "Cerqueira César", fee: 7.9, time: "30–40 min" },
+      { name: "Jardins", fee: 7.9, time: "30–40 min" },
+      { name: "Consolação", fee: 9.9, time: "35–45 min" },
+      { name: "Bela Vista", fee: 9.9, time: "35–50 min" },
+      { name: "Pinheiros", fee: 12.9, time: "40–55 min" },
+      { name: "Itaim Bibi", fee: 14.9, time: "45–60 min" },
     ],
   },
 
-  /** números exibidos nos contadores animados (demonstrativo) */
+  /** números exibidos nos contadores animados */
   stats: [
-    { value: 6, suffix: "", label: "anos de brasa acesa" },
-    { value: 8500, suffix: "+", label: "burgers por mês" },
-    { value: 12, suffix: "", label: "torneiras de chope" },
-    { value: 4.9, suffix: "★", label: "nota média (demo)", decimals: 1 },
+    { value: 4.4, suffix: "★", label: "nota no Google", decimals: 1 },
+    { value: 1148, suffix: "", label: "avaliações reais" },
+    { value: 11, suffix: "h", label: "aberto por dia" },
+    { value: 5, suffix: " tempos", label: "menu Sabores da França" },
   ] as Stat[],
 
-  /** mensagem padrão quando nenhum contexto é informado */
-  whatsappGreeting: "Olá! Vim pelo site do Porto Baa'R Black e quero fazer um pedido. 🔥",
-} as const;
+  whatsappGreeting: "Olá! Vim pelo site do Chez Amis Bistrô e gostaria de fazer uma reserva. 🍷",
+};
 
 export type Business = typeof business;

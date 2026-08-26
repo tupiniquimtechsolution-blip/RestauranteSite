@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Clock, Flame, Instagram, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Clock, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
 import { business } from "../config/business";
 import { createWhatsAppUrl } from "../lib/whatsapp";
 import { useCart } from "../context/CartContext";
@@ -13,6 +13,10 @@ export function Footer() {
         <div>
           <Logo />
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-sand">{business.description}</p>
+          <p className="mt-5 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-gold">
+            <Star aria-hidden size={13} fill="currentColor" /> {business.rating.value.toFixed(1).replace(".", ",")} ·{" "}
+            {business.rating.count.toLocaleString("pt-BR")} avaliações no Google
+          </p>
           <div className="mt-6 flex gap-2.5">
             <a
               href={business.social.instagram}
@@ -48,8 +52,8 @@ export function Footer() {
             {[
               { to: "/", label: "Início" },
               { to: "/cardapio", label: "Cardápio completo" },
-              { to: "/sobre", label: "Nossa história" },
-              { to: "/contato", label: "Contato & reservas" },
+              { to: "/sobre", label: "A casa" },
+              { to: "/contato", label: "Reservas & contato" },
             ].map((l) => (
               <li key={l.to}>
                 <Link to={l.to} className="text-sand transition-colors hover:text-ember">
@@ -57,6 +61,11 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <a href={business.address.googleMapsUrl} target="_blank" rel="noreferrer" className="text-sand transition-colors hover:text-ember">
+                Avaliar no Google
+              </a>
+            </li>
           </ul>
         </nav>
 
@@ -91,7 +100,7 @@ export function Footer() {
             <p className="flex items-center gap-2.5">
               <MessageCircle aria-hidden size={14} className="shrink-0 text-ember" />
               <a href={createWhatsAppUrl()} target="_blank" rel="noreferrer" className="hover:text-ember">
-                {business.contact.whatsappDisplay}
+                {business.contact.whatsappDisplay} (reservas)
               </a>
             </p>
           </address>
@@ -101,7 +110,7 @@ export function Footer() {
             rel="noreferrer"
             className="mt-6 inline-block bg-ember px-5 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-bg transition-all hover:bg-gold"
           >
-            Fazer um pedido
+            Reservar mesa
           </a>
         </div>
       </div>
@@ -109,10 +118,10 @@ export function Footer() {
       <div className="border-t border-linesoft">
         <div className="shell flex flex-col items-center justify-between gap-3 py-6 text-center sm:flex-row sm:text-left">
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-sand/70">
-            © {new Date().getFullYear()} {business.legalName} — CNPJ {business.cnpj}
+            © {new Date().getFullYear()} {business.legalName} · {business.address.neighborhood}, {business.address.city}
           </p>
-          <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-sand/70">
-            Site demonstrativo · conteúdo ilustrativo <Flame aria-hidden size={11} className="text-ember" /> feito na brasa
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-sand/70">
+            Site demonstrativo — pratos e equipe ilustrativos · fotos da casa: Google
           </p>
         </div>
       </div>
@@ -120,7 +129,7 @@ export function Footer() {
   );
 }
 
-/** Botão flutuante de WhatsApp — no mobile, sobe quando a barra de pedido está visível */
+/** Botão flutuante de WhatsApp — sobe no mobile quando a barra de pedido está visível */
 export function FloatingWhatsApp() {
   const { count } = useCart();
   const [visible, setVisible] = useState(false);
@@ -140,7 +149,7 @@ export function FloatingWhatsApp() {
       target="_blank"
       rel="noreferrer"
       aria-label="Conversar no WhatsApp"
-      className={`fixed right-4 z-[64] grid place-items-center rounded-full border border-ember/50 bg-ember text-bg shadow-ember transition-all duration-300 hover:scale-110 hover:bg-gold md:right-6 ${
+      className={`animate-fade fixed right-4 z-[64] grid place-items-center rounded-full border border-ember/50 bg-ember text-bg shadow-ember transition-all duration-300 hover:scale-110 hover:bg-gold md:right-6 ${
         count > 0 ? "bottom-24 md:bottom-6" : "bottom-6"
       }`}
       style={{ height: 52, width: 52 }}

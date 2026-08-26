@@ -1,8 +1,10 @@
 /**
  * ============================================================
- * CONTEÚDO EDITORIAL — promos, storytelling, avaliações,
- * equipe, Instagram e FAQ. Tudo demonstrativo, centralizado
- * e com imagens vindas de src/config/images.ts.
+ * CONTEÚDO EDITORIAL — Chez Amis Bistrô
+ * ------------------------------------------------------------
+ * Promos, storytelling, avaliações, equipe, Instagram e FAQ.
+ * Textos inspirados no perfil oficial (@chezamis.bistro) e na
+ * ficha do Google. Avaliações e equipe são demonstrativas.
  * ============================================================
  */
 import { images } from "./images";
@@ -19,38 +21,38 @@ export interface Promo {
 
 export const promos: Promo[] = [
   {
-    id: "quinta-open",
-    badge: "Toda quinta",
-    title: "Open Burger + Open Chope",
-    description: "Quinta é o dia oficial do Porto: smash à vontade e chope pilsen liberado das 19h às 23h, com música ao vivo.",
-    detail: "R$ 79,90 por pessoa · das 19h às 23h · reservas pelo WhatsApp",
-    image: images.smash,
+    id: "sabores-da-franca",
+    badge: "Menu degustação",
+    title: "Sabores da França",
+    description: "O espírito do bistrô francês em cinco tempos: uma entrada, três principais e uma sobremesa para fechar com Kir da Borgonha.",
+    detail: "R$ 129,90 por pessoa · almoço e jantar · todos os dias",
+    image: images.cover,
   },
   {
-    id: "combo-black",
-    badge: "Combo da casa",
-    title: "Combo Black Label",
-    description: "Smash Black Duplo + Fritas Black Trufadas + Chope IPA 500ml pelo preço que o container aguenta.",
-    detail: "De R$ 74,70 por R$ 64,90 · todos os dias no delivery",
-    code: "BLACKLABEL",
-    image: images.entradas,
+    id: "menu-executivo",
+    badge: "Seg a Sex · 12h–16h",
+    title: "Menu Executivo",
+    description: "Almoço descomplicado no coração dos Jardins: entrada + principal (ou principal + sobremesa) servidos com a leveza da casa.",
+    detail: "R$ 69,90 · de segunda a sexta, das 12h às 16h",
+    code: "ALMOCO",
+    image: images.interior2,
   },
   {
-    id: "terca-dobro",
-    badge: "Terça em dobro",
-    title: "Terça do Chope em Dobro",
-    description: "Pediu um chope artesanal, levou dois. Todas as terças, no salão e na retirada.",
-    detail: "Das 18h às 20h · valem IPA, Pilsen e Weiss",
-    image: images.bebidas,
+    id: "tartare-do-dia",
+    badge: "Finalizado na mesa",
+    title: "Steak Tartare na ponta da faca",
+    description: "Filé mignon cru cortado na hora, temperado ao seu gosto e servido com salada verde e fritas. O clássico que a rua inteira comenta.",
+    detail: "R$ 75,90 · todos os dias, das 12h às 23h",
+    image: images.steakTartare,
   },
   {
-    id: "frete-domingo",
-    badge: "Domingo",
-    title: "Domingo sem Taxa no Tatuapé",
-    description: "Pedidos acima de R$ 60 entregues sem taxa em todo o Tatuapé, das 17h às 22h.",
-    detail: "Acima de R$ 60 · pagamento via Pix",
-    code: "DOMINGO0",
-    image: images.brioche,
+    id: "kir-hour",
+    badge: "Para brindar",
+    title: "Kir da Borgonha em boa companhia",
+    description: "Crème de cassis e espumante no fim de tarde da Haddock Lobo. Seja para brindar ou para aquecer a alma — a mesa é sua.",
+    detail: "R$ 42,90 a taça · happy hour de terça a sexta",
+    code: "SANTE",
+    image: images.kirRoyale,
   },
 ];
 
@@ -65,36 +67,36 @@ export interface StoryStep {
 
 export const storySteps: StoryStep[] = [
   {
-    id: "ingredientes",
+    id: "mercado",
     kicker: "Capítulo 01",
-    title: "Ingredientes sem atalho",
-    text: "Blend moído diariamente na casa, 80/20 de ponta de agulha e peito. Pão potato assado na padoca da esquina, queijo de verdade e picles que a gente cura aqui mesmo.",
-    image: images.montagem,
-    stat: "100% blend artesanal",
+    title: "O mercado manda na cozinha",
+    text: "Legumes da estação, ervas frescas e carnes selecionadas de fornecedores próximos. O cardápio muda quando a estação muda — e é assim que tem que ser.",
+    image: images.storyMarket,
+    stat: "ingredientes de estação",
   },
   {
-    id: "preparo",
+    id: "tecnica",
     kicker: "Capítulo 02",
-    title: "Chapa de brasa, 280°C",
-    text: "A bola de carne vai pra chapa quente e é prensada uma única vez. É aí que nasce a crosta caramelizada — o Maillard que dá nome ao jogo.",
-    image: images.chef,
-    stat: "90g por disco",
+    title: "Técnica francesa, alma brasileira",
+    text: "Fundos reduzidos por horas, massas folhadas na casa, caramelização no ponto. A base clássica da França com o tempero que só São Paulo entende.",
+    image: images.storyTechnique,
+    stat: "fundos de 8 horas",
   },
   {
     id: "montagem",
     kicker: "Capítulo 03",
-    title: "Montagem em camadas",
-    text: "Molho black no pão tostado na manteiga, queijo derretido no vapor da própria carne, picles e a segunda camada. Ordem não é detalhe: é estrutura.",
-    image: images.brioche,
-    stat: "6 camadas exatas",
+    title: "Leveza, cor e sabor",
+    text: "Cada prato sai da cozinha como a gente gosta de descrever a casa: um refúgio onde a gastronomia francesa ganha leveza, cor e sabor.",
+    image: images.storyPlating,
+    stat: "5 tempos no degustação",
   },
   {
-    id: "resultado",
+    id: "mesa",
     kicker: "Capítulo 04",
-    title: "Do container pra sua mesa",
-    text: "Embalagem que respira pra crosta não amolecer, chope na temperatura certa e 40 minutos até a sua porta. Ou melhor: direto no balcão, saindo da chapa.",
-    image: images.smash,
-    stat: "40 min até você",
+    title: "A mesa posta, a casa cheia",
+    text: "Do almoço executivo ao jantar com Kir na mão: atendimento próximo, valet na porta e pratos que aquecem a alma. Chez Amis é, literalmente, a casa dos amigos.",
+    image: images.storyTable,
+    stat: "aberto todos os dias",
   },
 ];
 
@@ -106,42 +108,42 @@ export interface Testimonial {
   item: string;
 }
 
-/** AVALIAÇÕES DEMONSTRATIVAS — não representam clientes reais. */
+/** AVALIAÇÕES DEMONSTRATIVAS — não representam clientes reais. A nota média real é 4,4★ no Google (1.148 avaliações). */
 export const testimonials: Testimonial[] = [
   {
     name: "Mariana C.",
-    area: "Tatuapé",
-    text: "O Smash Black Duplo chegou quente e com a crosta intacta — coisa rara em delivery. O molho black é viciante.",
+    area: "Cerqueira César",
+    text: "O steak tartare finalizado na mesa é um espetáculo à parte — tempero na medida, do jeito que o garçom sugeriu. Virei cliente do almoço.",
     rating: 5,
-    item: "Smash Black Duplo",
+    item: "Steak Tartare",
   },
   {
     name: "Rafael T.",
-    area: "Anália Franco",
-    text: "Fui na quinta do open burger e voltei nas outras três quintas do mês. Chope gelado, som ao vivo e burger saindo sem parar.",
+    area: "Jardins",
+    text: "Fui no Sabores da França com a minha esposa e saímos impressionados: cinco tempos muito bem executados por um preço justo na região.",
     rating: 5,
-    item: "Open de Quinta",
+    item: "Menu Sabores da França",
   },
   {
     name: "Juliana P.",
-    area: "Mooca",
-    text: "As fritas trufadas são um perigo. Pedi 'só uma entradinha' e viraram o prato principal. Atendimento pelo WhatsApp super rápido.",
+    area: "Pinheiros",
+    text: "Menu executivo de qualidade rara em São Paulo. A sopa de cebola gratinada chegou borbulhando — e o crème brûlée foi disputado na mesa.",
     rating: 4.5,
-    item: "Fritas Black Trufadas",
+    item: "Menu Executivo",
   },
   {
     name: "Diego A.",
-    area: "Vila Formosa",
-    text: "Levei a família no domingo. O Brioche do Chef com gorgonzola é outro nível — e a equipe tratou as crianças como clientes VIP.",
+    area: "Bela Vista",
+    text: "Ambiente acolhedor, atendimento impecável e um Wellington que vale a travessia da cidade. O valet na porta facilita demais.",
     rating: 5,
-    item: "Brioche do Chef",
+    item: "Beef Wellington",
   },
   {
     name: "Camila R.",
-    area: "Penha",
-    text: "O Gin Tônica Black é o drink mais bonito do Tatuapé — e o sabor acompanha. Virei cliente do balcão.",
+    area: "Consolação",
+    text: "O Kir da Borgonha no fim de tarde virou ritual de sexta. Casa charmosa, descomplicada e com alma — exatamente como promete.",
     rating: 4.8,
-    item: "Gin Tônica Black",
+    item: "Kir da Borgonha",
   },
 ];
 
@@ -152,24 +154,25 @@ export interface TeamMember {
   image: string;
 }
 
+/** Equipe demonstrativa — substituir pelos nomes e fotos reais. */
 export const team: TeamMember[] = [
   {
-    name: "Caio Ferraz",
-    role: "Chef & fundador",
-    bio: "Passou por cozinhas de brasa em Buenos Aires e trouxe a obsessão pela crosta perfeita pra dentro do container.",
+    name: "Chef da casa",
+    role: "Cozinha & criação",
+    bio: "Comanda os clássicos franceses com técnica rigorosa e o toque descomplicado que define o Chez Amis.",
     image: images.chef,
   },
   {
-    name: "Lígia Andrade",
-    role: "Head de bar",
-    bio: "Assina os drinks autorais e a curadoria das 12 torneiras de chope que rotacionam toda semana.",
-    image: images.bebidas,
+    name: "Sommelière",
+    role: "Cave & bar",
+    bio: "Assina a rotação de vinhos em taça e os brindes da casa — do Kir da Borgonha aos achados da semana.",
+    image: images.kirRoyale,
   },
   {
-    name: "Bruno Sales",
-    role: "Mestre churrasqueiro",
-    bio: "Responsável pela costela de 12h e pelo ancho no ponto exato. Fala pouco, defuma muito.",
-    image: images.montagem,
+    name: "Chef pâtissier",
+    role: "Sobremesas",
+    bio: "Responsável pelo crème brûlée quebrado na hora, pelo sorbet de jabuticaba e pelos petits fours do café.",
+    image: images.cremeBrulee,
   },
 ];
 
@@ -181,12 +184,12 @@ export interface InstaTile {
 }
 
 export const instagramTiles: InstaTile[] = [
-  { id: "i1", image: images.smash, caption: "Smash saindo da chapa a 280°C", likes: "1,2 mil" },
-  { id: "i2", image: images.interior, caption: "Sexta no container: casa cheia", likes: "986" },
-  { id: "i3", image: images.bebidas, caption: "IPA da semana acabou de plugar", likes: "754" },
-  { id: "i4", image: images.entradas, caption: "Fritas Black: o perigo tem nome", likes: "1,5 mil" },
-  { id: "i5", image: images.chef, caption: "Chef Caio no comando da brasa", likes: "2,1 mil" },
-  { id: "i6", image: images.sobremesa, caption: "Brownie da casa com doce de leite", likes: "890" },
+  { id: "i1", image: images.steakTartare, caption: "Steak tartare cortado na ponta da faca", likes: "1,3 mil" },
+  { id: "i2", image: images.interior1, caption: "O refúgio da Haddock Lobo, 74", likes: "986" },
+  { id: "i3", image: images.kirRoyale, caption: "Kir da Borgonha para brindar a semana", likes: "754" },
+  { id: "i4", image: images.cremeBrulee, caption: "Crème brûlée quebrado na sua mesa", likes: "1,5 mil" },
+  { id: "i5", image: images.chef, caption: "Bastidores da cozinha do Chef", likes: "2,1 mil" },
+  { id: "i6", image: images.interior2, caption: "Mesa posta, casa cheia, alma aquecida", likes: "890" },
 ];
 
 export interface Faq {
@@ -196,50 +199,50 @@ export interface Faq {
 
 export const faqs: Faq[] = [
   {
-    q: "Como faço um pedido pelo site?",
-    a: "Monte seu pedido no cardápio, revise o carrinho e finalize pelo WhatsApp. Você recebe a confirmação do valor e do prazo direto com a nossa equipe.",
+    q: "Preciso reservar para jantar?",
+    a: "Recomendamos, principalmente de quinta a sábado. A reserva é feita pelo WhatsApp (11) 94504-4541 com nome, data, horário e número de pessoas.",
   },
   {
-    q: "Vocês entregam em quais bairros?",
-    a: "Tatuapé, Anália Franco, Vila Formosa, Mooca, Penha e Aricanduva, com taxas a partir de R$ 6,90. Outras regiões? Chama no WhatsApp que a gente avalia.",
+    q: "Como funciona o Menu Executivo?",
+    a: "De segunda a sexta, das 12h às 16h: entrada + principal (ou principal + sobremesa) por R$ 69,90. O cardápio muda com as estações.",
   },
   {
-    q: "Precisa reservar para a Quinta do Open?",
-    a: "Recomendamos muito. O open de quinta costuma lotar a partir das 20h. Reserve pelo WhatsApp com seu nome e número de pessoas.",
+    q: "O que é o menu Sabores da França?",
+    a: "Nosso menu degustação: uma entrada, três principais e uma sobremesa por R$ 129,90 por pessoa — servido no almoço e no jantar, todos os dias.",
   },
   {
-    q: "Quais são as formas de pagamento?",
-    a: "Pix, cartão de crédito/débito (na entrega e no salão) e dinheiro. No pedido pelo WhatsApp você informa como prefere pagar.",
+    q: "Vocês têm valet?",
+    a: "Sim! Valet na porta da Haddock Lobo, 74. Para quem prefere, há estacionamentos na região e a estação Trianon-Masp fica a poucos minutos a pé.",
   },
   {
-    q: "O cardápio tem opções vegetarianas?",
-    a: "Sim! Temos o Veggie de Grão-de-Bico, dadinhos de tapioca, mandioca na manteiga de garrafa e entradas vegetarianas.",
+    q: "Fazem eventos e grupos grandes?",
+    a: "Fazemos. Aniversários, confraternizações e mesas longas com o menu degustação são a nossa especialidade — chame no WhatsApp para montar a proposta.",
   },
   {
-    q: "Posso retirar no balcão?",
-    a: "Pode e recomendamos — o burger sai direto da chapa. Avise no pedido o horário estimado de retirada.",
+    q: "Quais as formas de pagamento?",
+    a: "Pix, cartões de crédito e débito. Pedidos de retirada e encomendas pelo WhatsApp seguem as mesmas condições.",
   },
 ];
 
 export const philosophy = [
   {
     n: "01",
-    title: "Brasa antes de tudo",
-    text: "Fogo de verdade, chapa de ferro e fumaça. Nada de atalho elétrico onde carvão resolve melhor.",
+    title: "Francês descomplicado",
+    text: "Clássicos de verdade, sem cerimônia desnecessária. A técnica é rigorosa; a experiência, leve.",
   },
   {
     n: "02",
-    title: "Ingredientes com origem",
-    text: "Fornecedores do bairro, blend moído na casa e pão de padoca local. Curto é o caminho bom.",
+    title: "Leveza, cor e sabor",
+    text: "A frase que define a casa: gastronomia francesa que ganha vida no prato e na mesa.",
   },
   {
     n: "03",
-    title: "Bar de gente grande",
-    text: "Chope artesanal rotativo e drinks autorais. Burger sem copo certo é burger pela metade.",
+    title: "Pratos que aquecem a alma",
+    text: "Sopa borbulhando, massa folhada dourada, caramelo quebrando. Conforto com sotaque.",
   },
   {
     n: "04",
-    title: "Container de porta aberta",
-    text: "Do pet do vizinho ao date de sexta: aqui todo mundo cabe. Música ao vivo faz parte do couvert emocional.",
+    title: "Chez Amis é na casa dos amigos",
+    text: "Do almoço de terça ao brinde de sábado: atendimento próximo, valet na porta e todo mundo bem-vindo.",
   },
 ];

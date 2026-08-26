@@ -1,157 +1,139 @@
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Bike, ChevronDown, Star } from "lucide-react";
 import { business } from "../config/business";
 import { images } from "../config/images";
+import { createWhatsAppUrl } from "../lib/whatsapp";
+import { ClocheIcon, Parallax, usePrefersReducedMotion } from "./ui";
 
 /**
- * HERO — composição em camadas com parallax em velocidades distintas:
- * fundo de brasa (lento), burger flutuante (rápido), conteúdo (médio).
- * Respeita prefers-reduced-motion desligando os transforms.
+ * HERO — composição em camadas com parallax nativo (rAF):
+ * salão ao fundo (lento), prato protagonista (rápido), texto (médio).
  */
 export default function Hero() {
-  const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, 140]);
-  const burgerY = useTransform(scrollYProgress, [0, 1], [0, -90]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 70]);
-  const fade = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
+  const reduce = usePrefersReducedMotion();
 
   const scrollToMenu = () => {
     document.getElementById("cardapio-home")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
   };
 
   return (
-    <section ref={ref} className="relative flex min-h-svh flex-col overflow-hidden bg-bg" aria-label="Destaque principal">
-      {/* camada 1 — fundo de brasa com parallax lento */}
-      <motion.div className="absolute inset-0" style={reduce ? undefined : { y: bgY }} aria-hidden>
-        <img src={images.bgBrasa} alt="" className="h-full w-full object-cover opacity-70" />
-        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/88 to-bg/30" />
+    <section className="relative flex min-h-svh flex-col overflow-hidden bg-bg" aria-label="Destaque principal">
+      {/* camada 1 — salão real do Chez Amis (parallax lento) */}
+      <Parallax speed={0.16} className="absolute inset-[-8%]">
+        <img src={images.heroBg} alt="" className="h-full w-full object-cover opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-bg/25" />
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-bg/70" />
-      </motion.div>
+      </Parallax>
 
       {/* camada 2 — marca d'água tipográfica */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-[16%] select-none overflow-hidden">
-        <p className="text-outline display-tight whitespace-nowrap text-center font-display text-[22vw] uppercase leading-none opacity-40 lg:text-[17vw]">
-          Brasa &amp; Chope
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-[14%] select-none overflow-hidden">
+        <p className="text-outline display-tight whitespace-nowrap text-center font-display text-[21vw] uppercase leading-none opacity-40 lg:text-[16vw]">
+          À la carte
         </p>
       </div>
 
-      {/* camada 3 — burger com parallax rápido + anel + badges */}
-      <motion.div
-        className="absolute right-[-14%] top-[16%] z-10 hidden w-[44vw] max-w-[560px] md:block"
-        style={reduce ? undefined : { y: burgerY }}
-        aria-hidden
-      >
+      {/* camada 3 — prato protagonista (parallax rápido) */}
+      <Parallax speed={-0.1} className="absolute right-[-10%] top-[14%] z-10 hidden w-[42vw] max-w-[540px] md:block">
         <div className="animate-floaty relative">
-          <div className="animate-ember absolute inset-[6%] rounded-full bg-ember/20 blur-3xl" />
-          <svg
-            viewBox="0 0 200 200"
-            className="animate-spin-slow absolute inset-[-4%] text-gold/50"
-            fill="none"
-            aria-hidden
-          >
-            <circle cx="100" cy="100" r="96" stroke="currentColor" strokeWidth="0.8" strokeDasharray="3 9" />
+          <div className="animate-ember absolute inset-[4%] rounded-full bg-ember/15 blur-3xl" />
+          <svg viewBox="0 0 200 200" className="animate-spin-slow absolute inset-[-5%] text-gold/40" fill="none" aria-hidden>
+            <circle cx="100" cy="100" r="96" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 10" />
           </svg>
-          <img
-            src={images.heroBurger}
-            alt=""
-            className="relative w-full object-contain drop-shadow-[0_50px_60px_rgba(0,0,0,0.85)]"
-          />
-          <div className="absolute left-[4%] top-[22%] border border-gold/40 bg-bg/85 px-3 py-2 backdrop-blur-sm">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-gold">Smash duplo</p>
-            <p className="font-display text-xl uppercase text-cream">R$ 34,90</p>
+          <div className="relative overflow-hidden rounded-full border-[6px] border-panel shadow-lift">
+            <img src={images.heroDish} alt="Steak tartare finalizado na mesa" className="aspect-square w-full object-cover" />
           </div>
-          <div className="absolute bottom-[16%] right-[2%] border border-line bg-panel/90 px-3 py-2 backdrop-blur-sm">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-sand">Chapa a</p>
-            <p className="font-display text-xl uppercase text-ember">280°C</p>
+          <div className="absolute left-[-6%] top-[20%] border border-gold/40 bg-bg/85 px-3 py-2 backdrop-blur-sm">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-gold">Na ponta da faca</p>
+            <p className="font-display text-xl uppercase text-cream">Steak Tartare</p>
+          </div>
+          <div className="absolute bottom-[12%] right-[-4%] border border-line bg-panel/90 px-3 py-2 backdrop-blur-sm">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-sand">Menu degustação</p>
+            <p className="font-display text-xl uppercase text-ember">5 tempos · R$ 129,90</p>
           </div>
         </div>
-      </motion.div>
+      </Parallax>
 
       {/* camada 4 — conteúdo */}
-      <motion.div style={reduce ? undefined : { y: contentY, opacity: fade }} className="relative z-20 flex flex-1 items-center">
-        <div className="shell w-full pt-24 pb-16">
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="max-w-2xl"
-          >
-            <p className="font-mono text-[11px] uppercase tracking-[0.34em] text-gold sm:text-xs">
-              Bar container · Tatuapé · desde {business.since}
+      <div className="relative z-20 flex flex-1 items-center">
+        <div className="shell w-full pt-28 pb-16">
+          <div className="max-w-2xl">
+            <p
+              className="animate-rise font-mono text-[11px] uppercase tracking-[0.34em] text-gold sm:text-xs"
+              style={{ animationDelay: "0.05s" }}
+            >
+              Cerqueira César · Jardins · desde sempre na Haddock Lobo
             </p>
 
             <h1 className="display-tight mt-6 font-display uppercase text-cream">
-              <span className="block text-5xl sm:text-7xl lg:text-[5.6rem]">O lado</span>
-              <span className="block text-6xl text-ember sm:text-8xl lg:text-[7.5rem]">black</span>
-              <span className="block text-5xl sm:text-7xl lg:text-[5.6rem]">
-                da <span className="text-outline-ember">brasa.</span>
+              <span className="animate-rise block text-5xl sm:text-7xl lg:text-[5.4rem]" style={{ animationDelay: "0.12s" }}>
+                Francês
+              </span>
+              <span className="animate-rise block text-6xl text-ember sm:text-8xl lg:text-[7.2rem]" style={{ animationDelay: "0.2s" }}>
+                descomplicado.
+              </span>
+              <span className="animate-rise block text-4xl sm:text-6xl lg:text-[4.6rem]" style={{ animationDelay: "0.28s" }}>
+                Do jeito que a <span className="text-outline-ember">gente gosta.</span>
               </span>
             </h1>
 
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-sand sm:text-lg">
-              Smash burgers prensados na hora, chopes artesanais em 12 torneiras e música ao vivo dentro de um container
-              preto. Delivery em todo o Tatuapé.
+            <p
+              className="animate-rise mt-6 max-w-lg text-base leading-relaxed text-sand sm:text-lg"
+              style={{ animationDelay: "0.36s" }}
+            >
+              Clássicos de bistrô — steak tartare, Wellington, sopa de cebola — com leveza, cor e sabor no número 74 da
+              Haddock Lobo. Aberto todos os dias, das 12h às 23h.
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+            <div className="animate-rise mt-9 flex flex-wrap items-center gap-4" style={{ animationDelay: "0.44s" }}>
               <Link
                 to="/cardapio"
                 className="group flex items-center gap-3 bg-ember px-7 py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-bg transition-all duration-300 hover:bg-gold hover:shadow-ember"
               >
-                Fazer pedido
-                <ArrowRight aria-hidden size={16} className="transition-transform duration-300 group-hover:translate-x-1.5" />
+                Ver cardápio
+                <ClocheIcon size={15} className="transition-transform duration-300 group-hover:-translate-y-0.5" />
               </Link>
+              <a
+                href={createWhatsAppUrl(business.whatsappGreeting)}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 border border-cream/25 px-7 py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-cream transition-all duration-300 hover:border-ember hover:text-ember"
+              >
+                Reservar mesa
+              </a>
               <button
                 type="button"
                 onClick={scrollToMenu}
-                className="group flex items-center gap-3 border border-cream/25 px-7 py-4 font-mono text-xs font-semibold uppercase tracking-[0.18em] text-cream transition-all duration-300 hover:border-ember hover:text-ember"
+                className="font-mono text-[11px] uppercase tracking-[0.18em] text-sand underline-offset-8 transition-colors hover:text-ember hover:underline"
               >
-                Ver cardápio
+                Sugestões da casa ↓
               </button>
             </div>
 
-            <dl className="mt-12 grid max-w-lg grid-cols-3 gap-4 border-t border-linesoft pt-6">
+            <dl
+              className="animate-rise mt-12 grid max-w-lg grid-cols-3 gap-4 border-t border-linesoft pt-6"
+              style={{ animationDelay: "0.52s" }}
+            >
               <div>
-                <dt className="sr-only">Avaliação média</dt>
+                <dt className="sr-only">Avaliação no Google</dt>
                 <dd className="flex items-center gap-1.5 font-display text-2xl text-cream">
-                  4,9 <Star aria-hidden size={16} fill="currentColor" className="text-gold" />
+                  4,4 <Star aria-hidden size={16} fill="currentColor" className="text-gold" />
                 </dd>
-                <dd className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-sand">nota média*</dd>
+                <dd className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-sand">1.148 no Google</dd>
               </div>
               <div>
-                <dt className="sr-only">Tempo de entrega</dt>
-                <dd className="flex items-center gap-1.5 font-display text-2xl text-cream">
-                  <Bike aria-hidden size={20} className="text-ember" /> 40 min
-                </dd>
-                <dd className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-sand">entrega média</dd>
+                <dt className="sr-only">Horário de funcionamento</dt>
+                <dd className="font-display text-2xl text-cream">12h–23h</dd>
+                <dd className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-sand">todos os dias</dd>
               </div>
               <div>
-                <dt className="sr-only">Horário</dt>
-                <dd className="font-display text-2xl text-cream">18h–01h</dd>
-                <dd className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-sand">sex e sáb</dd>
+                <dt className="sr-only">Faixa de preço</dt>
+                <dd className="font-display text-2xl text-cream">R$ 80–180</dd>
+                <dd className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-sand">por pessoa</dd>
               </div>
             </dl>
-            <p className="mt-3 font-mono text-[10px] text-sand/60">*Avaliação demonstrativa para fins de apresentação.</p>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
-
-      {/* indicador de scroll */}
-      <motion.button
-        type="button"
-        onClick={scrollToMenu}
-        aria-label="Rolar para o cardápio"
-        className="absolute bottom-5 left-1/2 z-20 hidden -translate-x-1/2 text-sand transition-colors hover:text-ember md:block"
-        animate={reduce ? undefined : { y: [0, 8, 0] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <ChevronDown aria-hidden size={26} />
-      </motion.button>
+      </div>
     </section>
   );
 }

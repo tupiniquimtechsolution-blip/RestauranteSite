@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
@@ -9,8 +8,8 @@ import { Logo } from "./ui";
 const links = [
   { to: "/", label: "Início" },
   { to: "/cardapio", label: "Cardápio" },
-  { to: "/sobre", label: "Nossa história" },
-  { to: "/contato", label: "Contato" },
+  { to: "/sobre", label: "A casa" },
+  { to: "/contato", label: "Reservas" },
 ];
 
 export default function Navbar() {
@@ -90,55 +89,48 @@ export default function Navbar() {
         </div>
       </header>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            className="fixed inset-0 z-[80] flex flex-col bg-bg lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu de navegação"
-          >
-            <div className="shell flex items-center justify-between py-5">
-              <Logo />
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center border border-line text-cream"
-                onClick={() => setOpen(false)}
-                aria-label="Fechar menu"
-              >
-                <X aria-hidden size={18} />
-              </button>
-            </div>
-            <nav className="shell flex flex-1 flex-col justify-center gap-2" aria-label="Navegação mobile">
-              {links.map((l, i) => (
-                <motion.div
-                  key={l.to}
-                  initial={{ opacity: 0, x: -24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.06 * i, duration: 0.4 }}
+      {open && (
+        <div
+          className="animate-fade fixed inset-0 z-[80] flex flex-col bg-bg lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu de navegação"
+        >
+          <div className="shell flex items-center justify-between py-5">
+            <Logo />
+            <button
+              type="button"
+              className="flex h-10 w-10 items-center justify-center border border-line text-cream"
+              onClick={() => setOpen(false)}
+              aria-label="Fechar menu"
+            >
+              <X aria-hidden size={18} />
+            </button>
+          </div>
+          <nav className="shell flex flex-1 flex-col justify-center gap-2" aria-label="Navegação mobile">
+            {links.map((l, i) => (
+              <div key={l.to} className="animate-rise" style={{ animationDelay: `${0.06 * i}s` }}>
+                <Link
+                  to={l.to}
+                  className={`display-tight block border-b border-linesoft py-4 font-display text-4xl uppercase transition-colors ${
+                    pathname === l.to ? "text-ember" : "text-cream hover:text-ember"
+                  }`}
                 >
-                  <Link
-                    to={l.to}
-                    className={`display-tight block border-b border-linesoft py-4 font-display text-4xl uppercase transition-colors ${
-                      pathname === l.to ? "text-ember" : "text-cream hover:text-ember"
-                    }`}
-                  >
-                    {l.label}
-                  </Link>
-                </motion.div>
-              ))}
-            </nav>
-            <div className="shell pb-10">
-              <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-sand">{business.address.neighborhood} · São Paulo</p>
-              <p className="mt-1 font-mono text-[11px] text-sand/70">{business.contact.whatsappDisplay}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  {l.label}
+                </Link>
+              </div>
+            ))}
+          </nav>
+          <div className="shell pb-10">
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-sand">
+              {business.address.street} · {business.address.neighborhood}
+            </p>
+            <p className="mt-1 font-mono text-[11px] text-sand/70">
+              Todos os dias 12h–23h · {business.contact.whatsappDisplay}
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
